@@ -36,7 +36,6 @@ public class EntityBlock extends Entity
     public Block block;
 
     //TODO remember to set this when reading a tile's TE.
-    //TODO remember to set new XYZ positions in the tag before spawning.
     public NBTTagCompound tileEntityNBT;
 
     public static float maxRotFac = 25F;

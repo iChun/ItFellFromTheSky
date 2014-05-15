@@ -46,7 +46,7 @@ public class ItFellFromTheSky
 
     }
 
-    public void console(String s, boolean warning)
+    public static void console(String s, boolean warning)
     {
         StringBuilder sb = new StringBuilder();
         logger.log(warning ? Level.WARN : Level.INFO, sb.append("[").append(version).append("] ").append(s).toString());

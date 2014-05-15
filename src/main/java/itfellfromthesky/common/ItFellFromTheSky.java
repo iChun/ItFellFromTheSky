@@ -6,6 +6,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import itfellfromthesky.common.core.CommonProxy;
+import itfellfromthesky.common.core.ObfHelper;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +30,8 @@ public class ItFellFromTheSky
     @Mod.EventHandler
     public void preLoad(FMLPreInitializationEvent event)
     {
+        ObfHelper.detectObfuscation();
+
         proxy.initMod();
     }
 

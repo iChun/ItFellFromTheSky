@@ -5,13 +5,17 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import itfellfromthesky.common.core.ObfHelper;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockChest;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+
+import java.util.Iterator;
 
 //TODO extend IInventory??
 public class EntityBlock extends Entity
@@ -27,6 +31,8 @@ public class EntityBlock extends Entity
 
     public int timeOnGround;
 
+    public int timeExisting;
+
     public Block block;
 
     //TODO remember to set this when reading a tile's TE.
@@ -38,17 +44,14 @@ public class EntityBlock extends Entity
     public EntityBlock(World world)
     {
         super(world);
-
-//        maxRotFac = 25F;
-
         setSize(0.95F, 0.95F);
 
         yOffset = height / 2F;
 
         preventEntitySpawning = true;
         renderDistanceWeight = 20D;
-        motionX = 1D;
-        motionY = motionZ = 1D;
+//        motionX = 1D;
+//        motionY = motionZ = 1D;
     }
 
     public EntityBlock(World world, int i, int j, int k)
@@ -132,6 +135,7 @@ public class EntityBlock extends Entity
     @Override
     public void onUpdate()
     {
+        timeExisting++;
         if(!worldObj.isRemote && (block == null || block.equals(Blocks.bedrock)))
         {
             setDead();
@@ -162,6 +166,8 @@ public class EntityBlock extends Entity
 
         moveEntity(motionX, motionY, motionZ);
 
+        boolean setBlock = false;
+
         if(onGround && ticksExisted > 2)
         {
             timeOnGround++;
@@ -184,6 +190,11 @@ public class EntityBlock extends Entity
                 }
                 motionX *= 0.7D;
                 motionZ *= 0.7D;
+
+                if(Math.abs(prevMotionX) < 0.05D && Math.abs(prevMotionZ) < 0.05D && Math.abs(prevMotionY) < 0.05D && Math.abs(getRotFacYaw()) < 0.05D && Math.abs(getRotFacPitch()) < 0.05D)
+                {
+                    setBlock = true;
+                }
             }
         }
         else
@@ -210,6 +221,48 @@ public class EntityBlock extends Entity
 
             setRotFacYaw(rand.nextFloat() * (2F * maxRotFac) - maxRotFac);
             setRotFacPitch(rand.nextFloat() * (2F * maxRotFac) - maxRotFac);
+        }
+
+        if(!worldObj.isRemote && (setBlock || timeExisting > (20 * 60 * 5)))
+        {
+            setDead();
+
+            int i = (int)Math.floor(posX);
+            int j = (int)Math.floor(posY);
+            int k = (int)Math.floor(posZ);
+
+            worldObj.setBlock(i, j, k, getBlock(), getMeta(), 3);
+
+            if(tileEntityNBT != null && getBlock() instanceof ITileEntityProvider)
+            {
+                TileEntity te = worldObj.getTileEntity(i, j, k);
+
+                if (te != null)
+                {
+                    NBTTagCompound nbttagcompound = new NBTTagCompound();
+                    te.writeToNBT(nbttagcompound);
+                    Iterator iterator = tileEntityNBT.func_150296_c().iterator();
+
+                    while (iterator.hasNext())
+                    {
+                        String s = (String)iterator.next();
+                        NBTBase nbtbase = tileEntityNBT.getTag(s);
+
+                        if (!s.equals("x") && !s.equals("y") && !s.equals("z"))
+                        {
+                            nbttagcompound.setTag(s, nbtbase.copy());
+                        }
+                    }
+
+                    te.readFromNBT(nbttagcompound);
+                    te.markDirty();
+                }
+            }
+
+            if(!(getBlock() instanceof BlockChest))
+            {
+                worldObj.setBlockMetadataWithNotify(i, j, k, getMeta(), 2);
+            }
         }
 
         motionX *= 0.98D;
@@ -253,6 +306,8 @@ public class EntityBlock extends Entity
         setBlock(Block.getBlockById(tag.getInteger("block")));
         setMeta(tag.getInteger("meta"));
 
+        timeExisting = tag.getInteger("timeExisting");
+
         tileEntityNBT = tag.getCompoundTag("tileEntity");
         if(tileEntityNBT.equals(new NBTTagCompound()))
         {
@@ -266,6 +321,7 @@ public class EntityBlock extends Entity
     {
         tag.setInteger("block", Block.getIdFromBlock(getBlock()));
         tag.setInteger("meta", getMeta());
+        tag.setInteger("timeExisting", timeExisting);
 
         if(tileEntityNBT != null)
         {

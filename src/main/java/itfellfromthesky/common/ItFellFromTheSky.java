@@ -29,13 +29,12 @@ public class ItFellFromTheSky
     @Mod.EventHandler
     public void preLoad(FMLPreInitializationEvent event)
     {
-
+        proxy.initMod();
     }
 
     @Mod.EventHandler
     public void load(FMLInitializationEvent event)
     {
-
     }
 
     @Mod.EventHandler

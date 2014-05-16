@@ -282,22 +282,22 @@ public class EntityBlock extends Entity
             }
         }
 
-        motionX *= 0.98D;
-        motionY *= 0.98D;
-        motionZ *= 0.98D;
+        motionX *= 0.99D;
+        motionY *= 0.99D;
+        motionZ *= 0.99D;
 
     }
 
     @Override
     public boolean canBeCollidedWith()
     {
-        return ticksExisted < 20 && !isDead;
+        return ticksExisted > 20 && !isDead;
     }
 
     @Override
     public boolean canBePushed()
     {
-        return ticksExisted < 20 && !isDead;
+        return ticksExisted > 20 && !isDead;
     }
 
     @Override

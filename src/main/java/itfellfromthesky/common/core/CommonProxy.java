@@ -14,7 +14,7 @@ public class CommonProxy
     public void initMod()
     {
         EntityRegistry.registerModEntity(EntityBlock.class, "itfellfromthesky_block", 140, ItFellFromTheSky.instance, 160, 20, true);
-        EntityRegistry.registerModEntity(EntityMeteorite.class, "itfellfromthesky_meteorite", 141, ItFellFromTheSky.instance, 160, 20, true);
+        EntityRegistry.registerModEntity(EntityMeteorite.class, "itfellfromthesky_meteorite", 141, ItFellFromTheSky.instance, 160, Integer.MAX_VALUE, true);
 
         ItFellFromTheSky.channels = NetworkRegistry.INSTANCE.newChannel("ItFellFromTheSky", new ChannelHandler(PacketMeteorSpawn.class, PacketKillMeteorite.class));
     }

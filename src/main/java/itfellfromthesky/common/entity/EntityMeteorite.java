@@ -1,16 +1,30 @@
 package itfellfromthesky.common.entity;
 
+import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import itfellfromthesky.common.core.ObfHelper;
 import itfellfromthesky.common.network.ChannelHandler;
 import itfellfromthesky.common.network.PacketKillMeteorite;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MathHelper;
+import net.minecraft.network.play.server.S2BPacketChangeGameState;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidRegistry;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EntityMeteorite extends Entity
 {
@@ -80,13 +94,13 @@ public class EntityMeteorite extends Entity
     @Override
     public boolean canBeCollidedWith()
     {
-        return !isDead;
+        return false;
     }
 
     @Override
     public boolean canBePushed()
     {
-        return !isDead;
+        return false;
     }
 
     @Override
@@ -111,9 +125,8 @@ public class EntityMeteorite extends Entity
     @Override
     public void onUpdate()
     {
-//        if(ticksExisted > 60)
-//        setDead();
-        noClip = true;
+        if(ticksExisted > 2000)
+        setDead();
         if(worldObj.isRemote && ticksExisted == 1)
         {
             lastTickPosY -= yOffset;
@@ -132,8 +145,10 @@ public class EntityMeteorite extends Entity
         rotPitch += getRotFacPitch();
 
         moveEntity(motionX, motionY, motionZ);
-
-//        Math.toDegrees(Math.atan2(motionZ, motionX));
+//        this.boundingBox.offset(motionX, motionY, motionZ);
+//        this.posX = (this.boundingBox.minX + this.boundingBox.maxX) / 2.0D;
+//        this.posY = this.boundingBox.minY + (double)this.yOffset - (double)this.ySize;
+//        this.posZ = (this.boundingBox.minZ + this.boundingBox.maxZ) / 2.0D;
 
         if(!worldObj.isRemote)
         {
@@ -141,6 +156,10 @@ public class EntityMeteorite extends Entity
 
             double radius = (double)width / 2D * 1.1D;
             double halfHeight = (double)height / 2D * 1.1D;
+
+            double inertiaFactor = 0.0001D;
+
+            double inertiaDampening = 0.0D;
 
             for(double y = posY - halfHeight; y <= posY + halfHeight; y++)
             {
@@ -163,6 +182,42 @@ public class EntityMeteorite extends Entity
                     z1 = zz;
                 }
 
+                double x3 = posX + ((int)Math.round(Math.sin(degs) * radius * (1.0D - MathHelper.clamp_double((Math.abs(y - posY)) / halfHeight, 0.0D, 1.0D))));
+                double x4 = posX;
+
+                double z3 = posZ + ((int)Math.round(Math.cos(degs) * radius * (1.0D - MathHelper.clamp_double((Math.abs(y - posY)) / halfHeight, 0.0D, 1.0D))));
+                double z4 = posZ;
+
+                if(x3 > x4)
+                {
+                    double xx = x4;
+                    x4 = x3;
+                    x3 = xx;
+                }
+                if(z3 > z4)
+                {
+                    double zz = z4;
+                    z4 = z3;
+                    z3 = zz;
+                }
+
+                if(x3 < x1)
+                {
+                    x1 = x3;
+                }
+                if(x4 > x2)
+                {
+                    x2 = x4;
+                }
+                if(z3 < z1)
+                {
+                    z1 = z3;
+                }
+                if(z4 > z2)
+                {
+                    z2 = z4;
+                }
+
                 for(double x = x1; x <= x2; x++)
                 {
                     for(double z = z1; z <= z2; z++)
@@ -170,15 +225,29 @@ public class EntityMeteorite extends Entity
                         int i = (int)Math.floor(x);
                         int j = (int)Math.floor(y);
                         int k = (int)Math.floor(z);
+                        Block blk = worldObj.getBlock(i, j, k);
 
-                        if(!worldObj.isAirBlock(i, j, k))
+                        float blockHardness = blk.getBlockHardness(worldObj, i, j, k);
+                        if(getDistance(x, y, z) < radius && !worldObj.isAirBlock(i, j, k) && blockHardness >= 0.0D)
                         {
-                            if(rand.nextFloat() < 0.5F)
+                            if(blk.getMaterial() == Material.water || blk.getMaterial() == Material.lava || FluidRegistry.lookupFluidForBlock(blk) != null)
                             {
-                                double mX = motionX + ((rand.nextDouble() - 0.5D) * 0.4D) * 1.3D;
-                                double mZ = motionZ + ((rand.nextDouble() - 0.5D) * 0.4D) * 1.3D;
+                                blockHardness = 1.0F;
+                            }
+                            inertiaDampening = (1.01D * inertiaDampening) + (blockHardness * blockHardness * inertiaFactor);
+
+//                            if(inertiaDampening > 1D)
+//                            {
+//                                System.out.println(blockHardness);
+//                                System.out.println(inertiaDampening);
+//                                System.out.println(worldObj.getBlock(i, j, k));
+//                            }
+                            if(rand.nextFloat() < 0.25F)
+                            {
+                                double mX = motionX * 2D + ((rand.nextDouble() - 0.5D) * 0.4D);
+                                double mZ = motionZ * 2D + ((rand.nextDouble() - 0.5D) * 0.4D);
                                 //TODO perpendicular motion?
-                                double mY = 0.4D + (rand.nextDouble() * 0.7D);
+                                double mY = 1.1D + (rand.nextDouble() * 1.2D);
                                 worldObj.spawnEntityInWorld(new EntityBlock(worldObj, i, j, k, mX, mY, mZ));
                             }
                             else
@@ -194,6 +263,20 @@ public class EntityMeteorite extends Entity
                     }
                 }
             }
+            motionX *= 1.0D - inertiaDampening;
+            motionZ *= 1.0D - inertiaDampening;
+            motionY *= 1.0D - inertiaDampening;
+
+            if(Math.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ) < 0.2D)
+            {
+                motionX *= 0.6D;
+                motionY *= 0.6D;
+                motionZ *= 0.6D;
+            }
+        }
+        else
+        {
+//            System.out.println(posY);
         }
     }
 
@@ -219,4 +302,261 @@ public class EntityMeteorite extends Entity
             super.setDead();
         }
     }
+
+    @Override
+    public void moveEntity(double par1, double par3, double par5)
+    {
+        if (this.noClip)
+        {
+            this.boundingBox.offset(par1, par3, par5);
+            this.posX = (this.boundingBox.minX + this.boundingBox.maxX) / 2.0D;
+            this.posY = this.boundingBox.minY + (double)this.yOffset - (double)this.ySize;
+            this.posZ = (this.boundingBox.minZ + this.boundingBox.maxZ) / 2.0D;
+        }
+        else
+        {
+            this.worldObj.theProfiler.startSection("move");
+            this.ySize *= 0.4F;
+            double d3 = this.posX;
+            double d4 = this.posY;
+            double d5 = this.posZ;
+
+            if (this.isInWeb)
+            {
+                this.isInWeb = false;
+                par1 *= 0.25D;
+                par3 *= 0.05000000074505806D;
+                par5 *= 0.25D;
+                this.motionX = 0.0D;
+                this.motionY = 0.0D;
+                this.motionZ = 0.0D;
+            }
+
+            double d6 = par1;
+            double d7 = par3;
+            double d8 = par5;
+            AxisAlignedBB axisalignedbb = this.boundingBox.copy();
+
+            List list = getCollidingBoundingBoxes(this.boundingBox.addCoord(par1, par3, par5));
+
+            for (int i = 0; i < list.size(); ++i)
+            {
+                par3 = ((AxisAlignedBB)list.get(i)).calculateYOffset(this.boundingBox, par3);
+            }
+
+            this.boundingBox.offset(0.0D, par3, 0.0D);
+
+            if (!this.field_70135_K && d7 != par3)
+            {
+                par5 = 0.0D;
+                par3 = 0.0D;
+                par1 = 0.0D;
+            }
+
+            boolean flag1 = this.onGround || d7 != par3 && d7 < 0.0D;
+            int j;
+
+            for (j = 0; j < list.size(); ++j)
+            {
+                par1 = ((AxisAlignedBB)list.get(j)).calculateXOffset(this.boundingBox, par1);
+            }
+
+            this.boundingBox.offset(par1, 0.0D, 0.0D);
+
+            if (!this.field_70135_K && d6 != par1)
+            {
+                par5 = 0.0D;
+                par3 = 0.0D;
+                par1 = 0.0D;
+            }
+
+            for (j = 0; j < list.size(); ++j)
+            {
+                par5 = ((AxisAlignedBB)list.get(j)).calculateZOffset(this.boundingBox, par5);
+            }
+
+            this.boundingBox.offset(0.0D, 0.0D, par5);
+
+            if (!this.field_70135_K && d8 != par5)
+            {
+                par5 = 0.0D;
+                par3 = 0.0D;
+                par1 = 0.0D;
+            }
+
+            double d10;
+            double d11;
+            int k;
+            double d12;
+
+            if (this.stepHeight > 0.0F && flag1 && this.ySize < 0.05F && (d6 != par1 || d8 != par5))
+            {
+                d12 = par1;
+                d10 = par3;
+                d11 = par5;
+                par1 = d6;
+                par3 = (double)this.stepHeight;
+                par5 = d8;
+                AxisAlignedBB axisalignedbb1 = this.boundingBox.copy();
+                this.boundingBox.setBB(axisalignedbb);
+                list = getCollidingBoundingBoxes(this.boundingBox.addCoord(d6, par3, d8));
+
+                for (k = 0; k < list.size(); ++k)
+                {
+                    par3 = ((AxisAlignedBB)list.get(k)).calculateYOffset(this.boundingBox, par3);
+                }
+
+                this.boundingBox.offset(0.0D, par3, 0.0D);
+
+                if (!this.field_70135_K && d7 != par3)
+                {
+                    par5 = 0.0D;
+                    par3 = 0.0D;
+                    par1 = 0.0D;
+                }
+
+                for (k = 0; k < list.size(); ++k)
+                {
+                    par1 = ((AxisAlignedBB)list.get(k)).calculateXOffset(this.boundingBox, par1);
+                }
+
+                this.boundingBox.offset(par1, 0.0D, 0.0D);
+
+                if (!this.field_70135_K && d6 != par1)
+                {
+                    par5 = 0.0D;
+                    par3 = 0.0D;
+                    par1 = 0.0D;
+                }
+
+                for (k = 0; k < list.size(); ++k)
+                {
+                    par5 = ((AxisAlignedBB)list.get(k)).calculateZOffset(this.boundingBox, par5);
+                }
+
+                this.boundingBox.offset(0.0D, 0.0D, par5);
+
+                if (!this.field_70135_K && d8 != par5)
+                {
+                    par5 = 0.0D;
+                    par3 = 0.0D;
+                    par1 = 0.0D;
+                }
+
+                if (!this.field_70135_K && d7 != par3)
+                {
+                    par5 = 0.0D;
+                    par3 = 0.0D;
+                    par1 = 0.0D;
+                }
+                else
+                {
+                    par3 = (double)(-this.stepHeight);
+
+                    for (k = 0; k < list.size(); ++k)
+                    {
+                        par3 = ((AxisAlignedBB)list.get(k)).calculateYOffset(this.boundingBox, par3);
+                    }
+
+                    this.boundingBox.offset(0.0D, par3, 0.0D);
+                }
+
+                if (d12 * d12 + d11 * d11 >= par1 * par1 + par5 * par5)
+                {
+                    par1 = d12;
+                    par3 = d10;
+                    par5 = d11;
+                    this.boundingBox.setBB(axisalignedbb1);
+                }
+            }
+
+            this.worldObj.theProfiler.endSection();
+            this.worldObj.theProfiler.startSection("rest");
+            this.posX = (this.boundingBox.minX + this.boundingBox.maxX) / 2.0D;
+            this.posY = this.boundingBox.minY + (double)this.yOffset - (double)this.ySize;
+            this.posZ = (this.boundingBox.minZ + this.boundingBox.maxZ) / 2.0D;
+            this.isCollidedHorizontally = d6 != par1 || d8 != par5;
+            this.isCollidedVertically = d7 != par3;
+            this.onGround = d7 != par3 && d7 < 0.0D;
+            this.isCollided = this.isCollidedHorizontally || this.isCollidedVertically;
+            this.updateFallState(par3, this.onGround);
+
+            if (d6 != par1)
+            {
+                this.motionX = 0.0D;
+            }
+
+            if (d7 != par3)
+            {
+                this.motionY = 0.0D;
+            }
+
+            if (d8 != par5)
+            {
+                this.motionZ = 0.0D;
+            }
+
+            d12 = this.posX - d3;
+            d10 = this.posY - d4;
+            d11 = this.posZ - d5;
+
+            try
+            {
+                this.func_145775_I();
+            }
+            catch (Throwable throwable)
+            {
+                CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Checking entity block collision");
+                CrashReportCategory crashreportcategory = crashreport.makeCategory("Entity being checked for collision");
+                this.addEntityCrashInfo(crashreportcategory);
+                throw new ReportedException(crashreport);
+            }
+
+            boolean flag2 = this.isWet();
+
+            this.worldObj.theProfiler.endSection();
+        }
+    }
+
+    public List getCollidingBoundingBoxes(AxisAlignedBB par2AxisAlignedBB)
+    {
+        List boxes = new ArrayList();
+        int i = MathHelper.floor_double(par2AxisAlignedBB.minX);
+        int j = MathHelper.floor_double(par2AxisAlignedBB.maxX + 1.0D);
+        int k = MathHelper.floor_double(par2AxisAlignedBB.minY);
+        int l = MathHelper.floor_double(par2AxisAlignedBB.maxY + 1.0D);
+        int i1 = MathHelper.floor_double(par2AxisAlignedBB.minZ);
+        int j1 = MathHelper.floor_double(par2AxisAlignedBB.maxZ + 1.0D);
+
+        for (int k1 = i; k1 < j; ++k1)
+        {
+            for (int l1 = i1; l1 < j1; ++l1)
+            {
+                if (worldObj.blockExists(k1, 64, l1))
+                {
+                    for (int i2 = k - 1; i2 < l; ++i2)
+                    {
+                        Block block;
+
+                        if (k1 >= -30000000 && k1 < 30000000 && l1 >= -30000000 && l1 < 30000000)
+                        {
+                            block = worldObj.getBlock(k1, i2, l1);
+                        }
+                        else
+                        {
+                            block = Blocks.stone;
+                        }
+
+                        if(block.getBlockHardness(worldObj, k1, i2, l1) < 0.0D)
+                        {
+                            block.addCollisionBoxesToList(worldObj, k1, i2, l1, par2AxisAlignedBB, boxes, this);
+                        }
+                    }
+                }
+            }
+        }
+
+        return boxes;
+    }
+
 }

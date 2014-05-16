@@ -2,6 +2,7 @@ package itfellfromthesky.common.network;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
+import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -66,5 +67,12 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket>
     public EntityPlayer getMCPlayer()
     {
         return Minecraft.getMinecraft().thePlayer;
+    }
+
+    public static void sendToDimension(IPacket packet, int dimension)
+    {
+        ItFellFromTheSky.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.DIMENSION);
+        ItFellFromTheSky.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(dimension);
+        ItFellFromTheSky.channels.get(Side.SERVER).writeAndFlush(packet);
     }
 }

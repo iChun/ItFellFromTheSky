@@ -76,6 +76,15 @@ public class EntityBlock extends Entity
         setLocationAndAngles(i + 0.5D, j + 0.5D - (double)yOffset, k + 0.5D, 0F, 0F);
     }
 
+    public EntityBlock(World world, int i, int j, int k, double mX, double mY, double mZ)
+    {
+        this(world, i, j, k);
+
+        motionX = mX;
+        motionY = mY;
+        motionZ = mZ;
+    }
+
     @Override
     protected void entityInit()
     {
@@ -135,7 +144,7 @@ public class EntityBlock extends Entity
     public void onUpdate()
     {
         timeExisting++;
-        if(!worldObj.isRemote && (block == null || block.equals(Blocks.bedrock)))
+        if(!worldObj.isRemote && (block == null || block.equals(Blocks.bedrock)) || posY < -50D)
         {
             setDead();
             return;
@@ -146,6 +155,15 @@ public class EntityBlock extends Entity
             prevPosY -= yOffset;
             posY -= yOffset;
             setPosition(posX, posY, posZ);
+        }
+
+        if(ticksExisted < 60)
+        {
+            noClip = true;
+        }
+        else
+        {
+            noClip = false;
         }
 
         prevRotYaw = rotYaw;
@@ -177,7 +195,7 @@ public class EntityBlock extends Entity
                     double minBounceFactor = Math.sqrt(100D / 75D);
                     float blockHardness = (Float)ObfuscationReflectionHelper.getPrivateValue(Block.class, getBlock(), ObfHelper.blockHardness);
                     double bounceFactor = (blockHardness < minBounceFactor ? minBounceFactor : blockHardness);
-                    motionY = prevMotionY * -(1D / (bounceFactor));
+                    motionY = prevMotionY * -(1D / (2 * bounceFactor));
 
                     setRotFacYaw(rand.nextFloat() * (2F * maxRotFac) - maxRotFac);
                     setRotFacPitch(rand.nextFloat() * (2F * maxRotFac) - maxRotFac);
@@ -273,13 +291,13 @@ public class EntityBlock extends Entity
     @Override
     public boolean canBeCollidedWith()
     {
-        return !isDead;
+        return ticksExisted < 20 && !isDead;
     }
 
     @Override
     public boolean canBePushed()
     {
-        return !isDead;
+        return ticksExisted < 20 && !isDead;
     }
 
     @Override

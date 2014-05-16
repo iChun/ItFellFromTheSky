@@ -6,6 +6,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import itfellfromthesky.common.core.ObfHelper;
 import itfellfromthesky.common.network.ChannelHandler;
 import itfellfromthesky.common.network.PacketKillMeteorite;
+import itfellfromthesky.common.network.PacketMeteoriteInfo;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
@@ -36,6 +37,10 @@ public class EntityMeteorite extends Entity
 
     public boolean canSetDead;
 
+    public boolean stopped;
+
+    public double prevInertia;
+
     public static float maxRotFac = 10F;
 
     public EntityMeteorite(World world)
@@ -51,7 +56,7 @@ public class EntityMeteorite extends Entity
         renderDistanceWeight = 60D;
 
         motionX = 1D;
-//        motionZ = -1D;
+        motionZ = -0.25D;
 //        motionX = rand.nextDouble() * 2 - 1D;
 //        motionZ = rand.nextDouble() * 2 - 1D;
         motionY = -0.1D;
@@ -69,11 +74,21 @@ public class EntityMeteorite extends Entity
     {
         dataWatcher.addObject(18, rand.nextFloat() * (2F * maxRotFac) - maxRotFac); //rotFactor Yaw
         dataWatcher.addObject(19, rand.nextFloat() * (2F * maxRotFac) - maxRotFac); //rotFactor Pitch
+
+        dataWatcher.addObject(20, 0F); //motionX
+        dataWatcher.addObject(21, 0F); //motionY
+        dataWatcher.addObject(22, 0F); //motionZ
+
+        dataWatcher.addObject(23, 0F); //Initial yaw
+        dataWatcher.addObject(24, 0F); //Initial pitch
     }
 
     public void setRotFacYaw(float f)
     {
-        dataWatcher.updateObject(18, f);
+        if(getRotFacYaw() != f)
+        {
+            dataWatcher.updateObject(18, f);
+        }
     }
 
     public float getRotFacYaw()
@@ -83,12 +98,40 @@ public class EntityMeteorite extends Entity
 
     public void setRotFacPitch(float f)
     {
-        dataWatcher.updateObject(19, f);
+        if(getRotFacPitch() != f)
+        {
+            dataWatcher.updateObject(19, f);
+        }
     }
 
     public float getRotFacPitch()
     {
         return dataWatcher.getWatchableObjectFloat(19);
+    }
+
+    public void updateMotion(double d, double d1, double d2)
+    {
+        if(!(getMoX() == d && getMoY() == d1 && getMoZ() == d2))
+        {
+            dataWatcher.updateObject(20, (float)d);
+            dataWatcher.updateObject(21, (float)d1);
+            dataWatcher.updateObject(22, (float)d2);
+        }
+    }
+
+    public double getMoX()
+    {
+        return (double)dataWatcher.getWatchableObjectFloat(20);
+    }
+
+    public double getMoY()
+    {
+        return (double)dataWatcher.getWatchableObjectFloat(21);
+    }
+
+    public double getMoZ()
+    {
+        return (double)dataWatcher.getWatchableObjectFloat(22);
     }
 
     @Override
@@ -144,7 +187,6 @@ public class EntityMeteorite extends Entity
         rotYaw += getRotFacYaw();
         rotPitch += getRotFacPitch();
 
-        moveEntity(motionX, motionY, motionZ);
 //        this.boundingBox.offset(motionX, motionY, motionZ);
 //        this.posX = (this.boundingBox.minX + this.boundingBox.maxX) / 2.0D;
 //        this.posY = this.boundingBox.minY + (double)this.yOffset - (double)this.ySize;
@@ -152,14 +194,26 @@ public class EntityMeteorite extends Entity
 
         if(!worldObj.isRemote)
         {
+            moveEntity(motionX, motionY, motionZ);
+
             double degs = (double)Math.atan2(motionX, motionZ);
 
             double radius = (double)width / 2D * 1.1D;
             double halfHeight = (double)height / 2D * 1.1D;
 
+            double radius2 = radius;
+
+            if(prevInertia - 0.07D > 0.0D)
+            {
+                double amp = MathHelper.clamp_double(1.0D + ((prevInertia - 0.07D) / 1.2D), 1.0D, 1.3D);
+                radius2 *= amp;
+            }
+
             double inertiaFactor = 0.0001D;
 
             double inertiaDampening = 0.0D;
+
+            double backChance = radius / radius2;
 
             for(double y = posY - halfHeight; y <= posY + halfHeight; y++)
             {
@@ -228,26 +282,58 @@ public class EntityMeteorite extends Entity
                         Block blk = worldObj.getBlock(i, j, k);
 
                         float blockHardness = blk.getBlockHardness(worldObj, i, j, k);
-                        if(getDistance(x, y, z) < radius && !worldObj.isAirBlock(i, j, k) && blockHardness >= 0.0D)
+                        if(getDistance(x, y, z) < radius && !worldObj.isAirBlock(i, j, k) && blockHardness >= 0.0F && blk.canEntityDestroy(worldObj, i, j, k, this))
                         {
+                            boolean isFluid = false;
                             if(blk.getMaterial() == Material.water || blk.getMaterial() == Material.lava || FluidRegistry.lookupFluidForBlock(blk) != null)
                             {
+                                isFluid = true;
                                 blockHardness = 1.0F;
+                            }
+                            if(blockHardness > 1.0F)
+                            {
+                                blockHardness *= 0.75F;
                             }
                             inertiaDampening = (1.01D * inertiaDampening) + (blockHardness * blockHardness * inertiaFactor);
 
-//                            if(inertiaDampening > 1D)
-//                            {
-//                                System.out.println(blockHardness);
-//                                System.out.println(inertiaDampening);
-//                                System.out.println(worldObj.getBlock(i, j, k));
-//                            }
-                            if(rand.nextFloat() < 0.25F)
+                            if(rand.nextFloat() < 0.25F && !isFluid)
                             {
-                                double mX = motionX * 2D + ((rand.nextDouble() - 0.5D) * 0.4D);
-                                double mZ = motionZ * 2D + ((rand.nextDouble() - 0.5D) * 0.4D);
+                                double amp = 0.75D;
+
+                                double offsetX = 0.0D;
+                                double offsetZ = 0.0D;
+
+                                double xDist = Math.abs(posX - x);
+                                if(x >= posX && x <= x2 + 1)
+                                {
+                                    offsetX = amp * Math.pow(xDist / (x2 - posX), 2);
+                                }
+                                else if(x > x1 - 1)
+                                {
+                                    offsetX = -amp * Math.pow(xDist / (posX - x1), 2);
+                                }
+
+                                double zDist = Math.abs(posZ - z);
+                                if(z >= posZ && z <= z2 + 1)
+                                {
+                                    offsetZ = amp * Math.pow(zDist / (z2 - posZ), 2);
+                                }
+                                else if(z > z1 - 1)
+                                {
+                                    offsetZ = -amp * Math.pow(zDist / (posZ - z1), 2);
+                                }
+
+                                double mX = motionX * (1.5D + (0.5D * rand.nextDouble())) + offsetX;
+                                double mZ = motionZ * (1.5D + (0.5D * rand.nextDouble())) + offsetZ;
+                                double mY = Math.sqrt(motionX * motionX + motionZ * motionZ) + (rand.nextDouble() * 0.5D);
+
+                                if(backChance != 1.0D)
+                                {
+                                    mX = motionX * (2D + (0.5D * rand.nextDouble())) * -1D + offsetX * 0.5D;
+                                    mZ = motionZ * (2D + (0.5D * rand.nextDouble())) * -1D + offsetZ * 0.5D;
+                                    mY = Math.sqrt(motionX * motionX + motionZ * motionZ) * 0.5D + (rand.nextDouble() * 0.5D);
+                                }
                                 //TODO perpendicular motion?
-                                double mY = 1.1D + (rand.nextDouble() * 1.2D);
                                 worldObj.spawnEntityInWorld(new EntityBlock(worldObj, i, j, k, mX, mY, mZ));
                             }
                             else
@@ -263,31 +349,84 @@ public class EntityMeteorite extends Entity
                     }
                 }
             }
+
+            prevInertia = inertiaDampening;
+
             motionX *= 1.0D - inertiaDampening;
             motionZ *= 1.0D - inertiaDampening;
             motionY *= 1.0D - inertiaDampening;
 
-            if(Math.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ) < 0.2D)
+            setRotFacYaw(getRotFacYaw() * (float)(1.0D - (2 * inertiaDampening)));
+            setRotFacPitch(getRotFacPitch() * (float)(1.0D - (2 * inertiaDampening)));
+
+            if(motionY <= -0.1D)
             {
-                motionX *= 0.6D;
-                motionY *= 0.6D;
-                motionZ *= 0.6D;
+                motionY += inertiaDampening > 0.04 ? 0.04 : inertiaDampening;
             }
+
+            if(inertiaDampening > 0.0D)
+            {
+                motionY -= 0.001D;
+            }
+
+            double velo = Math.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
+            if(velo < 0.333D)
+            {
+                motionX *= 0.8D;
+                motionY *= 0.8D;
+                motionZ *= 0.8D;
+
+                setRotFacYaw(getRotFacYaw() * 0.85F);
+                setRotFacPitch(getRotFacPitch() * 0.85F);
+
+                if(velo < 0.01D)
+                {
+                    stopped = true;
+                }
+            }
+
+            updateMotion(motionX, motionY, motionZ);
+
+            updateDataWatcher();
         }
         else
         {
+            moveEntity(getMoX(), getMoY(), getMoZ());
 //            System.out.println(posY);
+        }
+
+        if(stopped)
+        {
+            setRotFacYaw(0F);
+            setRotFacPitch(0F);
+            motionX = motionY = motionZ = 0.0D;
+        }
+    }
+
+    private void updateDataWatcher()
+    {
+        if(dataWatcher.hasChanges())
+        {
+            ChannelHandler.sendToDimension(new PacketMeteoriteInfo(this), worldObj.provider.dimensionId);
+            dataWatcher.getChanged();
         }
     }
 
     @Override
     protected void readEntityFromNBT(NBTTagCompound var1)
     {
+        rotYaw = var1.getFloat("rotYaw");
+        rotPitch = var1.getFloat("rotPitch");
+
+        dataWatcher.updateObject(23, rotYaw);
+        dataWatcher.updateObject(24, rotPitch);
     }
 
     @Override
     protected void writeEntityToNBT(NBTTagCompound var1)
     {
+        var1.setFloat("rotYaw", rotYaw);
+        var1.setFloat("rotPitch", rotPitch);
     }
 
     @Override
@@ -296,8 +435,9 @@ public class EntityMeteorite extends Entity
         if(!worldObj.isRemote)
         {
             ChannelHandler.sendToDimension(new PacketKillMeteorite(getEntityId()), worldObj.provider.dimensionId);
+            super.setDead();
         }
-        if(worldObj.isRemote && canSetDead || !worldObj.isRemote)
+        if(worldObj.isRemote && canSetDead)
         {
             super.setDead();
         }

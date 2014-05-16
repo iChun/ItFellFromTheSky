@@ -7,15 +7,23 @@ import itfellfromthesky.common.core.ObfHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.material.Material;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.ReportedException;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 //TODO extend IInventory??
 public class EntityBlock extends Entity
@@ -157,7 +165,7 @@ public class EntityBlock extends Entity
             setPosition(posX, posY, posZ);
         }
 
-        if(ticksExisted < 60)
+        if(ticksExisted < 20)
         {
             noClip = true;
         }
@@ -282,22 +290,292 @@ public class EntityBlock extends Entity
             }
         }
 
-        motionX *= 0.99D;
-        motionY *= 0.99D;
-        motionZ *= 0.99D;
+        motionX *= 0.9875D;
+        motionY *= 0.9875D;
+        motionZ *= 0.9875D;
 
+    }
+
+    @Override
+    public void moveEntity(double par1, double par3, double par5)
+    {
+        if (this.noClip)
+        {
+            this.boundingBox.offset(par1, par3, par5);
+            this.posX = (this.boundingBox.minX + this.boundingBox.maxX) / 2.0D;
+            this.posY = this.boundingBox.minY + (double)this.yOffset - (double)this.ySize;
+            this.posZ = (this.boundingBox.minZ + this.boundingBox.maxZ) / 2.0D;
+        }
+        else
+        {
+            this.worldObj.theProfiler.startSection("move");
+            this.ySize *= 0.4F;
+            double d3 = this.posX;
+            double d4 = this.posY;
+            double d5 = this.posZ;
+
+            if (this.isInWeb)
+            {
+                this.isInWeb = false;
+                par1 *= 0.25D;
+                par3 *= 0.05000000074505806D;
+                par5 *= 0.25D;
+                this.motionX = 0.0D;
+                this.motionY = 0.0D;
+                this.motionZ = 0.0D;
+            }
+
+            double d6 = par1;
+            double d7 = par3;
+            double d8 = par5;
+            AxisAlignedBB axisalignedbb = this.boundingBox.copy();
+
+            List list = getCollidingBoundingBoxes(this.boundingBox.addCoord(par1, par3, par5));
+
+            for (int i = 0; i < list.size(); ++i)
+            {
+                par3 = ((AxisAlignedBB)list.get(i)).calculateYOffset(this.boundingBox, par3);
+            }
+
+            this.boundingBox.offset(0.0D, par3, 0.0D);
+
+            if (!this.field_70135_K && d7 != par3)
+            {
+                par5 = 0.0D;
+                par3 = 0.0D;
+                par1 = 0.0D;
+            }
+
+            boolean flag1 = this.onGround || d7 != par3 && d7 < 0.0D;
+            int j;
+
+            for (j = 0; j < list.size(); ++j)
+            {
+                par1 = ((AxisAlignedBB)list.get(j)).calculateXOffset(this.boundingBox, par1);
+            }
+
+            this.boundingBox.offset(par1, 0.0D, 0.0D);
+
+            if (!this.field_70135_K && d6 != par1)
+            {
+                par5 = 0.0D;
+                par3 = 0.0D;
+                par1 = 0.0D;
+            }
+
+            for (j = 0; j < list.size(); ++j)
+            {
+                par5 = ((AxisAlignedBB)list.get(j)).calculateZOffset(this.boundingBox, par5);
+            }
+
+            this.boundingBox.offset(0.0D, 0.0D, par5);
+
+            if (!this.field_70135_K && d8 != par5)
+            {
+                par5 = 0.0D;
+                par3 = 0.0D;
+                par1 = 0.0D;
+            }
+
+            double d10;
+            double d11;
+            int k;
+            double d12;
+
+            if (this.stepHeight > 0.0F && flag1 && (d6 != par1 || d8 != par5))
+            {
+                d12 = par1;
+                d10 = par3;
+                d11 = par5;
+                par1 = d6;
+                par3 = (double)this.stepHeight;
+                par5 = d8;
+                AxisAlignedBB axisalignedbb1 = this.boundingBox.copy();
+                this.boundingBox.setBB(axisalignedbb);
+                list = getCollidingBoundingBoxes(this.boundingBox.addCoord(d6, par3, d8));
+
+                for (k = 0; k < list.size(); ++k)
+                {
+                    par3 = ((AxisAlignedBB)list.get(k)).calculateYOffset(this.boundingBox, par3);
+                }
+
+                this.boundingBox.offset(0.0D, par3, 0.0D);
+
+                if (!this.field_70135_K && d7 != par3)
+                {
+                    par5 = 0.0D;
+                    par3 = 0.0D;
+                    par1 = 0.0D;
+                }
+
+                for (k = 0; k < list.size(); ++k)
+                {
+                    par1 = ((AxisAlignedBB)list.get(k)).calculateXOffset(this.boundingBox, par1);
+                }
+
+                this.boundingBox.offset(par1, 0.0D, 0.0D);
+
+                if (!this.field_70135_K && d6 != par1)
+                {
+                    par5 = 0.0D;
+                    par3 = 0.0D;
+                    par1 = 0.0D;
+                }
+
+                for (k = 0; k < list.size(); ++k)
+                {
+                    par5 = ((AxisAlignedBB)list.get(k)).calculateZOffset(this.boundingBox, par5);
+                }
+
+                this.boundingBox.offset(0.0D, 0.0D, par5);
+
+                if (!this.field_70135_K && d8 != par5)
+                {
+                    par5 = 0.0D;
+                    par3 = 0.0D;
+                    par1 = 0.0D;
+                }
+
+                if (!this.field_70135_K && d7 != par3)
+                {
+                    par5 = 0.0D;
+                    par3 = 0.0D;
+                    par1 = 0.0D;
+                }
+                else
+                {
+                    par3 = (double)(-this.stepHeight);
+
+                    for (k = 0; k < list.size(); ++k)
+                    {
+                        par3 = ((AxisAlignedBB)list.get(k)).calculateYOffset(this.boundingBox, par3);
+                    }
+
+                    this.boundingBox.offset(0.0D, par3, 0.0D);
+                }
+
+                if (d12 * d12 + d11 * d11 >= par1 * par1 + par5 * par5)
+                {
+                    par1 = d12;
+                    par3 = d10;
+                    par5 = d11;
+                    this.boundingBox.setBB(axisalignedbb1);
+                }
+            }
+
+            this.worldObj.theProfiler.endSection();
+            this.worldObj.theProfiler.startSection("rest");
+            this.posX = (this.boundingBox.minX + this.boundingBox.maxX) / 2.0D;
+            this.posY = this.boundingBox.minY + (double)this.yOffset - (double)this.ySize;
+            this.posZ = (this.boundingBox.minZ + this.boundingBox.maxZ) / 2.0D;
+            this.isCollidedHorizontally = d6 != par1 || d8 != par5;
+            this.isCollidedVertically = d7 != par3;
+            this.onGround = d7 != par3 && d7 < 0.0D;
+            this.isCollided = this.isCollidedHorizontally || this.isCollidedVertically;
+            this.updateFallState(par3, this.onGround);
+
+            if (d6 != par1)
+            {
+                this.motionX = 0.0D;
+            }
+
+            if (d7 != par3)
+            {
+                this.motionY = 0.0D;
+            }
+
+            if (d8 != par5)
+            {
+                this.motionZ = 0.0D;
+            }
+
+            try
+            {
+                this.func_145775_I();
+            }
+            catch (Throwable throwable)
+            {
+                CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Checking entity block collision");
+                CrashReportCategory crashreportcategory = crashreport.makeCategory("Entity being checked for collision");
+                this.addEntityCrashInfo(crashreportcategory);
+                throw new ReportedException(crashreport);
+            }
+            this.worldObj.theProfiler.endSection();
+        }
+    }
+
+    public List getCollidingBoundingBoxes(AxisAlignedBB par2AxisAlignedBB)
+    {
+        List boxes = new ArrayList();
+        int i = MathHelper.floor_double(par2AxisAlignedBB.minX);
+        int j = MathHelper.floor_double(par2AxisAlignedBB.maxX + 1.0D);
+        int k = MathHelper.floor_double(par2AxisAlignedBB.minY);
+        int l = MathHelper.floor_double(par2AxisAlignedBB.maxY + 1.0D);
+        int i1 = MathHelper.floor_double(par2AxisAlignedBB.minZ);
+        int j1 = MathHelper.floor_double(par2AxisAlignedBB.maxZ + 1.0D);
+
+        for (int k1 = i; k1 < j; ++k1)
+        {
+            for (int l1 = i1; l1 < j1; ++l1)
+            {
+                if (worldObj.blockExists(k1, 64, l1))
+                {
+                    for (int i2 = k - 1; i2 < l; ++i2)
+                    {
+                        Block block;
+
+                        if (k1 >= -30000000 && k1 < 30000000 && l1 >= -30000000 && l1 < 30000000)
+                        {
+                            block = worldObj.getBlock(k1, i2, l1);
+                        }
+                        else
+                        {
+                            block = Blocks.stone;
+                        }
+
+                        block.addCollisionBoxesToList(worldObj, k1, i2, l1, par2AxisAlignedBB, boxes, this);
+                    }
+                }
+            }
+        }
+
+        double d0 = 0.25D;
+        List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, par2AxisAlignedBB.expand(d0, d0, d0));
+
+        for (int j2 = 0; j2 < list.size(); ++j2)
+        {
+            if(list.get(j2) instanceof EntityMeteorite)
+            {
+                continue;
+            }
+            AxisAlignedBB axisalignedbb1 = ((Entity)list.get(j2)).getBoundingBox();
+
+            if (axisalignedbb1 != null && axisalignedbb1.intersectsWith(par2AxisAlignedBB))
+            {
+                boxes.add(axisalignedbb1);
+            }
+
+            axisalignedbb1 = this.getCollisionBox((Entity)list.get(j2));
+
+            if (axisalignedbb1 != null && axisalignedbb1.intersectsWith(par2AxisAlignedBB))
+            {
+                boxes.add(axisalignedbb1);
+            }
+        }
+
+        return boxes;
     }
 
     @Override
     public boolean canBeCollidedWith()
     {
-        return ticksExisted > 20 && !isDead;
+        return timeExisting > 20 && !isDead;
     }
 
     @Override
     public boolean canBePushed()
     {
-        return ticksExisted > 20 && !isDead;
+        return timeExisting > 20 && !isDead;
     }
 
     @Override

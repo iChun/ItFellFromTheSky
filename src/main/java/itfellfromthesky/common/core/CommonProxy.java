@@ -8,6 +8,7 @@ import itfellfromthesky.common.entity.EntityMeteorite;
 import itfellfromthesky.common.network.ChannelHandler;
 import itfellfromthesky.common.network.PacketKillMeteorite;
 import itfellfromthesky.common.network.PacketMeteorSpawn;
+import itfellfromthesky.common.network.PacketMeteoriteInfo;
 
 public class CommonProxy
 {
@@ -16,6 +17,6 @@ public class CommonProxy
         EntityRegistry.registerModEntity(EntityBlock.class, "itfellfromthesky_block", 140, ItFellFromTheSky.instance, 160, 20, true);
         EntityRegistry.registerModEntity(EntityMeteorite.class, "itfellfromthesky_meteorite", 141, ItFellFromTheSky.instance, 160, Integer.MAX_VALUE, true);
 
-        ItFellFromTheSky.channels = NetworkRegistry.INSTANCE.newChannel("ItFellFromTheSky", new ChannelHandler(PacketMeteorSpawn.class, PacketKillMeteorite.class));
+        ItFellFromTheSky.channels = NetworkRegistry.INSTANCE.newChannel("ItFellFromTheSky", new ChannelHandler(PacketMeteorSpawn.class, PacketKillMeteorite.class, PacketMeteoriteInfo.class));
     }
 }

@@ -3,12 +3,17 @@ package itfellfromthesky.common.core;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import itfellfromthesky.common.ItFellFromTheSky;
 import itfellfromthesky.common.entity.EntityMeteorite;
+import itfellfromthesky.common.network.ChannelHandler;
+import itfellfromthesky.common.network.PacketMeteoriteInfo;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+
+import java.util.Map;
 
 public class EventHandler
 {

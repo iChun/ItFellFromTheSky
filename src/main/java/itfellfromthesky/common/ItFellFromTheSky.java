@@ -1,10 +1,9 @@
 package itfellfromthesky.common;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.relauncher.Side;
 import itfellfromthesky.common.core.ChunkLoadHandler;
@@ -44,7 +43,8 @@ public class ItFellFromTheSky
 
         proxy.initMod();
 
-        MinecraftForge.EVENT_BUS.register(new EventHandler());
+        EventHandler handler = new EventHandler();
+        MinecraftForge.EVENT_BUS.register(handler);
         ForgeChunkManager.setForcedChunkLoadingCallback(this, new ChunkLoadHandler());
     }
 
@@ -56,7 +56,12 @@ public class ItFellFromTheSky
     @Mod.EventHandler
     public void postLoad(FMLPostInitializationEvent event)
     {
+    }
 
+    @Mod.EventHandler
+    public  void onServerStopped(FMLServerStoppedEvent event)
+    {
+        ChunkLoadHandler.tickets.clear();
     }
 
     public static void console(String s, boolean warning)

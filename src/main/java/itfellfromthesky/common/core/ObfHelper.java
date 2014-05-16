@@ -9,8 +9,8 @@ public class ObfHelper
 {
     public static boolean obfuscation;
 
-    //TODO get srgnames
-    public static final String[] blockHardness      = new String[] { "", "blockHardness" }; //Block
+    //TODO See if this is right
+    public static final String[] blockHardness      = new String[] { "field_149782_v", "blockHardness" }; //Block
 
     public static void detectObfuscation()
     {

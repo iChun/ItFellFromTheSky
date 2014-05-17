@@ -1,9 +1,7 @@
 package itfellfromthesky.client.render;
 
-import itfellfromthesky.client.model.ModelPigBase;
 import itfellfromthesky.common.entity.EntityPigPart;
 import itfellfromthesky.common.entity.EntityPigzilla;
-import itfellfromthesky.common.entity.EntityTransformer;
 import net.minecraft.client.model.ModelPig;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
@@ -24,9 +22,9 @@ public class RenderPigzilla extends Render
         modelBase.isChild = false;
     }
 
-    public void doRender(EntityPigzilla transformer, double posX, double posY, double posZ, float par8, float renderTick)
+    public void doRender(EntityPigzilla pig, double posX, double posY, double posZ, float par8, float renderTick)
     {
-        if(transformer.ticksExisted <= 2)
+        if(pig.ticksExisted <= 2)
         {
             return;
         }
@@ -35,7 +33,7 @@ public class RenderPigzilla extends Render
 
         GL11.glPushMatrix();
         GL11.glTranslatef((float)posX, (float)posY, (float)posZ);
-        this.bindEntityTexture(transformer);
+        this.bindEntityTexture(pig);
 
         GL11.glScalef(-40.0F, -40.0F, 40.0F);
 
@@ -44,8 +42,8 @@ public class RenderPigzilla extends Render
         GL11.glTranslatef(0.0F, -1.5F, 0.0F);
         GL11.glRotatef(180F, 0F, 1F, 0F);
 
-        GL11.glRotatef(transformer.rotationYaw, 0F, 1F, 0F);
-        modelBase.render(transformer, renderTick, 0.0F, -0.1F, 0.0F, 0.0F, 0.0625F);
+        GL11.glRotatef(interpolateRotation(pig.prevRenderYawOffset, pig.renderYawOffset, renderTick), 0F, 1F, 0F);
+        modelBase.render(pig, pig.limbSwing, 0.4F, 2F, interpolateRotation(pig.prevRotationYaw, pig.rotationYaw, renderTick), interpolateRotation(pig.prevRotationPitch, pig.rotationPitch, renderTick), 0.0625F);
 
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glPopMatrix();

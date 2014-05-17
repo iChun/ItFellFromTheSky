@@ -1,9 +1,7 @@
 package itfellfromthesky.common.entity;
 
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import itfellfromthesky.common.core.ObfHelper;
 import itfellfromthesky.common.network.ChannelHandler;
 import itfellfromthesky.common.network.PacketKillMeteorite;
 import itfellfromthesky.common.network.PacketMeteoriteInfo;
@@ -11,16 +9,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.EntityEnderman;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.play.server.S2BPacketChangeGameState;
-import net.minecraft.util.*;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.ReportedException;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidRegistry;
 
@@ -60,8 +54,8 @@ public class EntityMeteorite extends Entity
         ignoreFrustumCheck = true;
         renderDistanceWeight = 60D;
 
-        motionX = 1D;
-        motionZ = -1D;
+//        motionX = 1D;
+//        motionZ = -1D;
 //        motionX = rand.nextDouble() * 2 - 1D;
 //        motionZ = rand.nextDouble() * 2 - 1D;
         motionY = -0.1D;
@@ -341,7 +335,7 @@ public class EntityMeteorite extends Entity
                                     mY = Math.sqrt(motionX * motionX + motionZ * motionZ) * 0.5D + (rand.nextDouble() * 0.5D);
                                 }
                                 //TODO perpendicular motion?
-                                worldObj.spawnEntityInWorld(new EntityBlock(worldObj, i, j, k, mX, mY, mZ));
+                                worldObj.spawnEntityInWorld(new EntityBlock(worldObj, i, j, k, mX, mY, mZ, 30));
                             }
                             else
                             {

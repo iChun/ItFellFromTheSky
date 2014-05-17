@@ -7,11 +7,9 @@ import itfellfromthesky.common.core.ObfHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.material.Material;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -45,6 +43,8 @@ public class EntityBlock extends Entity
 
     //TODO remember to set this when reading a tile's TE.
     public NBTTagCompound tileEntityNBT;
+
+    public int timeout;
 
     public static float maxRotFac = 25F;
 
@@ -84,13 +84,15 @@ public class EntityBlock extends Entity
         setLocationAndAngles(i + 0.5D, j + 0.5D - (double)yOffset, k + 0.5D, 0F, 0F);
     }
 
-    public EntityBlock(World world, int i, int j, int k, double mX, double mY, double mZ)
+    public EntityBlock(World world, int i, int j, int k, double mX, double mY, double mZ, int time)
     {
         this(world, i, j, k);
 
         motionX = mX;
         motionY = mY;
         motionZ = mZ;
+
+        timeout = time;
     }
 
     @Override
@@ -165,7 +167,7 @@ public class EntityBlock extends Entity
             setPosition(posX, posY, posZ);
         }
 
-        if(ticksExisted < 20)
+        if(timeExisting < timeout)
         {
             noClip = true;
         }
@@ -569,13 +571,13 @@ public class EntityBlock extends Entity
     @Override
     public boolean canBeCollidedWith()
     {
-        return timeExisting > 20 && !isDead;
+        return timeExisting > timeout && !isDead;
     }
 
     @Override
     public boolean canBePushed()
     {
-        return timeExisting > 20 && !isDead;
+        return timeExisting > timeout && !isDead;
     }
 
     @Override

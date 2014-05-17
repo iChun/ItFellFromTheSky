@@ -128,6 +128,18 @@ public class EntityTransformer extends Entity
                 rotYaw = getOriginRot() + (rotYaw - getOriginRot()) * 0.9F;
                 rotPitch *= 0.9F;
             }
+
+            if(!worldObj.isRemote && transformationProcess > transformationTime)
+            {
+                if(transformationProcess == transformationTime + 10)
+                {
+                    worldObj.spawnEntityInWorld(new EntityPigzilla(worldObj, this));
+                }
+                if(transformationProcess >= transformationTime + 15)
+                {
+                    setDead();
+                }
+            }
         }
     }
 

@@ -4,7 +4,6 @@ import itfellfromthesky.client.render.RenderTransformer;
 import itfellfromthesky.common.entity.EntityTransformer;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
 
@@ -103,9 +102,18 @@ public class ModelPigBase extends ModelBase
 
         GL11.glScalef(40F, 40F, 40F);
 
-        GL11.glRotatef(90F, 0F, 1F, 0F);
+        progress = 0.0F;
 
-        GL11.glRotatef(-RenderTransformer.interpolateRotation(entity.prevRotYaw, entity.rotYaw, f), 0F, 1F, 0F);
+        if(entity.transformationProcess + f > entity.transformationTime / 2 + 20)
+        {
+            progress = MathHelper.clamp_float(((float)(entity.transformationProcess + f) - ((float)entity.transformationTime / 2F + 20F)) / (((float)entity.transformationTime * 1900F / 2000F) - ((float)entity.transformationTime / 2F + 20F)), 0.0F, 1.0F);
+        }
+
+        GL11.glRotatef(90F + (-90F * progress), 0F, 1F, 0F);
+
+        float rotYaw = RenderTransformer.interpolateRotation(entity.prevRotYaw, entity.rotYaw, f);
+        GL11.glRotatef(-rotYaw + ((2 * rotYaw) * progress), 0F, 1F, 0F);
+
         GL11.glRotatef(RenderTransformer.interpolateRotation(entity.prevRotPitch, entity.rotPitch, f), 0F, 0F, 1F);
 
         head.render(f5);

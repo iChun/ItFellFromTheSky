@@ -41,6 +41,11 @@ public class EntityMeteorite extends Entity
 
     public double prevInertia;
 
+    public int stopTime;
+
+    public double originX;
+    public double originZ;
+
     public static float maxRotFac = 10F;
 
     public EntityMeteorite(World world)
@@ -56,7 +61,7 @@ public class EntityMeteorite extends Entity
         renderDistanceWeight = 60D;
 
         motionX = 1D;
-        motionZ = -0.25D;
+        motionZ = -1D;
 //        motionX = rand.nextDouble() * 2 - 1D;
 //        motionZ = rand.nextDouble() * 2 - 1D;
         motionY = -0.1D;
@@ -66,6 +71,8 @@ public class EntityMeteorite extends Entity
     {
         this(world);
 
+        originX = x;
+        originZ = z;
         setLocationAndAngles(x, y, z, 0F, 0F);
     }
 
@@ -400,6 +407,19 @@ public class EntityMeteorite extends Entity
             setRotFacYaw(0F);
             setRotFacPitch(0F);
             motionX = motionY = motionZ = 0.0D;
+
+            stopTime++;
+            if(!worldObj.isRemote)
+            {
+                if(stopTime == 20)
+                {
+                    worldObj.spawnEntityInWorld(new EntityTransformer(this, 20));
+                }
+                if(stopTime == 25)
+                {
+                    setDead();
+                }
+            }
         }
     }
 
@@ -420,6 +440,9 @@ public class EntityMeteorite extends Entity
 
         dataWatcher.updateObject(23, rotYaw);
         dataWatcher.updateObject(24, rotPitch);
+
+        originX = var1.getDouble("originX");
+        originZ = var1.getDouble("originZ");
     }
 
     @Override
@@ -427,6 +450,9 @@ public class EntityMeteorite extends Entity
     {
         var1.setFloat("rotYaw", rotYaw);
         var1.setFloat("rotPitch", rotPitch);
+
+        var1.setDouble("originX", originX);
+        var1.setDouble("originZ", originZ);
     }
 
     @Override

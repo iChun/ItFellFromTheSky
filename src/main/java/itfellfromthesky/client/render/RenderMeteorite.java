@@ -27,10 +27,6 @@ public class RenderMeteorite extends Render
 
     public void doRender(EntityMeteorite entBlock, double posX, double posY, double posZ, float par8, float renderTick)
     {
-        int i = MathHelper.floor_double(entBlock.posX);
-        int j = MathHelper.floor_double(entBlock.posY);
-        int k = MathHelper.floor_double(entBlock.posZ);
-
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 

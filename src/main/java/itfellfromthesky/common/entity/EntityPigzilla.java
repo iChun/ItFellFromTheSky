@@ -2,15 +2,21 @@ package itfellfromthesky.common.entity;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ibxm.Channel;
+import itfellfromthesky.common.network.ChannelHandler;
+import itfellfromthesky.common.network.PacketRidePig;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.command.IEntitySelector;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
@@ -42,7 +48,7 @@ public class EntityPigzilla extends Entity
 
     public int idleTimeout;
 
-    public Entity watchedEntity;
+    public EntityLivingBase watchedEntity;
 
     public EntityPigzilla(World world)
     {
@@ -85,7 +91,8 @@ public class EntityPigzilla extends Entity
     {
         dataWatcher.addObject(20, 0F); //targeted render yaw
         dataWatcher.addObject(21, (byte)0); //is idle?
-        dataWatcher.addObject(22, 0F);
+        dataWatcher.addObject(22, 0F); // spawn render offset
+        dataWatcher.addObject(23, -1); //watched entity ID
     }
 
     public void setTargetedRenderYawOffset(float f)
@@ -113,6 +120,25 @@ public class EntityPigzilla extends Entity
     public boolean getIdle()
     {
         return (this.dataWatcher.getWatchableObjectByte(21) & 1) != 0;
+    }
+
+    public void setWatchedEntity(EntityLivingBase ent)
+    {
+        if(ent != null)
+        {
+            watchedEntity = ent;
+            dataWatcher.updateObject(23, ent.getEntityId());
+        }
+        else
+        {
+            watchedEntity = null;
+            dataWatcher.updateObject(23, -1);
+        }
+    }
+
+    public int getWatchedEntityId()
+    {
+        return dataWatcher.getWatchableObjectInt(23);
     }
 
     @Override
@@ -143,6 +169,13 @@ public class EntityPigzilla extends Entity
     public boolean canRenderOnFire()
     {
         return false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public float getShadowSize()
+    {
+        return 25F;
     }
 
     @Override
@@ -216,7 +249,7 @@ public class EntityPigzilla extends Entity
         {
             getBlocksInPartsNotInBB();
 
-            if(rand.nextFloat() < (velo <= 0.0D ? 0.005F : 0.0025F))
+            if(rand.nextFloat() < (velo <= 0.0D ? 0.0075F : 0.0025F))
             {
                 if(rand.nextFloat() < 0.15F)
                 {
@@ -229,6 +262,51 @@ public class EntityPigzilla extends Entity
                     setTargetedRenderYawOffset(rand.nextFloat() * 360F);
                 }
             }
+
+            if(riddenByEntity == null && rand.nextFloat() < (watchedEntity != null ? 0.0025F : 0.010F)) //skew with watchedEntity
+            {
+                List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, boundingBox.expand(15D, 0D, 15D).addCoord(0D, 30D, 0D).expand(30D, 0D, 30D), livingEntities);
+
+                for(int i = 0; i < list.size(); i++)
+                {
+                    EntityLivingBase living = (EntityLivingBase)list.get(i);
+                    if(!canSee(living))
+                    {
+                        continue;
+                    }
+                    setWatchedEntity(living);
+                    break;
+                }
+            }
+
+            if(riddenByEntity != null || watchedEntity != null && (!canSee(watchedEntity) || rand.nextFloat() < 0.005F))
+            {
+                setWatchedEntity(null);
+            }
+        }
+        else
+        {
+            if(watchedEntity == null && getWatchedEntityId() != -1)
+            {
+                Entity ent = worldObj.getEntityByID(getWatchedEntityId());
+                if(ent instanceof EntityLivingBase)
+                {
+                    watchedEntity = (EntityLivingBase)ent;
+                }
+            }
+            else if(watchedEntity != null && (getWatchedEntityId() == -1 || getWatchedEntityId() != watchedEntity.getEntityId()))
+            {
+                watchedEntity = null;
+            }
+        }
+
+        if(watchedEntity != null)
+        {
+            faceEntity(watchedEntity, 0.6F, 0.6F);
+        }
+        else
+        {
+            faceEntity(null, 0.6F, 0.6F);
         }
 
         if(idleTimeout > 0 || getIdle())
@@ -251,19 +329,22 @@ public class EntityPigzilla extends Entity
                 riddenByEntity.rotationYaw += updateRotation(renderYawOffset, getTargetedRenderYawOffset(), 0.5F) - renderYawOffset;
             }
 
-            motionX = (double)(-MathHelper.sin(renderYawOffset / 180.0F * (float)Math.PI));
-            motionZ = (double)(MathHelper.cos(renderYawOffset / 180.0F * (float)Math.PI));
+//            if(!worldObj.isRemote)
+            {
+                motionX = (double)(-MathHelper.sin(renderYawOffset / 180.0F * (float)Math.PI));
+                motionZ = (double)(MathHelper.cos(renderYawOffset / 180.0F * (float)Math.PI));
 
-            float f2 = MathHelper.sqrt_double(motionX * motionX + motionZ * motionZ);
-            motionX /= (double)f2;
-            motionZ /= (double)f2;
-            motionX *= 0.4D;
-            motionZ *= 0.4D;
+                float f2 = MathHelper.sqrt_double(motionX * motionX + motionZ * motionZ);
+                motionX /= (double)f2;
+                motionZ /= (double)f2;
+                motionX *= 0.4D;
+                motionZ *= 0.4D;
+            }
         }
 
         if(riddenByEntity != null)
         {
-            rotationYaw = 0.0F;
+            rotationYaw = renderYawOffset;
             rotationPitch = 0.0F;
 
             if(!worldObj.isRemote && riddenByEntity instanceof EntityLivingBase)
@@ -280,6 +361,34 @@ public class EntityPigzilla extends Entity
         }
     }
 
+    public boolean canSee(EntityLivingBase ent)
+    {
+        double viewThresh = 0.3D * Math.PI;
+        return getAngle(ent.posX, ent.posY + ent.getEyeHeight(), ent.posZ) < viewThresh && ent.canEntityBeSeen(this);
+    }
+
+    public double getAngle(double d, double d1, double d2)
+    {
+        float f1 = MathHelper.cos(-renderYawOffset * 0.01745329F - 3.141593F);
+        float f3 = MathHelper.sin(-renderYawOffset * 0.01745329F - 3.141593F);
+        float f5 = -MathHelper.cos(0F * 0.01745329F);
+        float f7 = MathHelper.sin(0F * 0.01745329F);
+
+        double lookx = f3 * f5;
+        double looky = f7;
+        double lookz = f1 * f5;
+
+        double dx = d - posX;
+        double dy = d1 - posY - getEyeHeight();
+        double dz = d2 - posZ;
+
+        double len = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+        double dot = (dx / len) * lookx + (dy / len) * looky + (dz / len) * lookz;
+
+        return Math.acos(dot);
+    }
+
     @Override
     public void updateRiderPosition()
     {
@@ -292,7 +401,12 @@ public class EntityPigzilla extends Entity
     @Override
     public boolean interactFirst(EntityPlayer entityplayer)
     {
-        if (!this.worldObj.isRemote && (this.riddenByEntity == null || this.riddenByEntity == entityplayer))
+        if (worldObj.isRemote && riddenByEntity == null)
+        {
+            ChannelHandler.sendToServer(new PacketRidePig(this, entityplayer));
+            return true;
+        }
+        else if (!this.worldObj.isRemote && (this.riddenByEntity == null || this.riddenByEntity == entityplayer))
         {
             entityplayer.mountEntity(this);
             return true;
@@ -309,6 +423,8 @@ public class EntityPigzilla extends Entity
     {
         renderYawOffset = var1.getFloat("renderYawOffset");
         setTargetedRenderYawOffset(var1.getFloat("targetedRenderYawOffset"));
+
+        dataWatcher.updateObject(22, renderYawOffset);
     }
 
     @Override
@@ -334,27 +450,35 @@ public class EntityPigzilla extends Entity
         super.setDead();
     }
 
-    public void faceEntity(Entity par1Entity, float par2, float par3)
+    public void faceEntity(Entity entity, float par2, float par3)
     {
-        double d0 = par1Entity.posX - this.posX;
-        double d2 = par1Entity.posZ - this.posZ;
-        double d1;
-
-        if (par1Entity instanceof EntityLivingBase)
+        if(entity == null)
         {
-            EntityLivingBase entitylivingbase = (EntityLivingBase)par1Entity;
-            d1 = entitylivingbase.posY + (double)entitylivingbase.getEyeHeight() - (this.posY + (double)this.getEyeHeight());
+            this.rotationPitch = this.updateRotation(this.rotationPitch, 0.0F, par3);
+            this.rotationYaw = this.updateRotation(rotationYaw, renderYawOffset, par2);
         }
         else
         {
-            d1 = (par1Entity.boundingBox.minY + par1Entity.boundingBox.maxY) / 2.0D - (this.posY + (double)this.getEyeHeight());
-        }
+            double d0 = entity.posX - this.posX;
+            double d2 = entity.posZ - this.posZ;
+            double d1;
 
-        double d3 = (double)MathHelper.sqrt_double(d0 * d0 + d2 * d2);
-        float f2 = (float)(Math.atan2(d2, d0) * 180.0D / Math.PI) - 90.0F;
-        float f3 = (float)(-(Math.atan2(d1, d3) * 180.0D / Math.PI));
-        this.rotationPitch = this.updateRotation(this.rotationPitch, f3, par3);
-        this.rotationYaw = this.updateRotation(this.rotationYaw, f2, par2);
+            if(entity instanceof EntityLivingBase)
+            {
+                EntityLivingBase entitylivingbase = (EntityLivingBase)entity;
+                d1 = entitylivingbase.posY + (double)entitylivingbase.getEyeHeight() - (this.posY + (double)this.getEyeHeight());
+            }
+            else
+            {
+                d1 = (entity.boundingBox.minY + entity.boundingBox.maxY) / 2.0D - (this.posY + (double)this.getEyeHeight());
+            }
+
+            double d3 = (double)MathHelper.sqrt_double(d0 * d0 + d2 * d2);
+            float f2 = (float)(Math.atan2(d2, d0) * 180.0D / Math.PI) - 90.0F;
+            float f3 = (float)(-(Math.atan2(d1, d3) * 180.0D / Math.PI));
+            this.rotationPitch = this.updateRotation(this.rotationPitch, f3, par3);
+            this.rotationYaw = this.updateRotation(rotationYaw, f2, par2);
+        }
     }
 
     private float updateRotation(float par1, float par2, float par3)
@@ -623,7 +747,7 @@ public class EntityPigzilla extends Entity
             AxisAlignedBB bb = parts[i].boundingBox.copy();
             if(i > 1)
             {
-                bb.offset(0D, stepHeight + 0.1D - (fallDistance / 3F), 0D);
+                bb.offset(0D, stepHeight + 0.1D - (fallDistance / 4F), 0D);
                 bb.expand(1F / 16F * 40D, 0.0D, 1F / 16F * 40D);
             }
             boxes.addAll(getCollidingBoundingBoxes(bb.addCoord(motionX, motionY, motionZ)));
@@ -754,5 +878,13 @@ public class EntityPigzilla extends Entity
         }
         return boxes;
     }
+
+    IEntitySelector livingEntities = new IEntitySelector()
+    {
+        public boolean isEntityApplicable(Entity par1Entity)
+        {
+            return par1Entity instanceof EntityLivingBase && par1Entity.isEntityAlive();
+        }
+    };
 
 }

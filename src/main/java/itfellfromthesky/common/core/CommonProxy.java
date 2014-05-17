@@ -4,10 +4,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import itfellfromthesky.common.ItFellFromTheSky;
 import itfellfromthesky.common.entity.*;
-import itfellfromthesky.common.network.ChannelHandler;
-import itfellfromthesky.common.network.PacketKillMeteorite;
-import itfellfromthesky.common.network.PacketMeteorSpawn;
-import itfellfromthesky.common.network.PacketMeteoriteInfo;
+import itfellfromthesky.common.network.*;
 
 public class CommonProxy
 {
@@ -19,6 +16,6 @@ public class CommonProxy
         EntityRegistry.registerModEntity(EntityPigzilla.class, "itfellfromthesky_pigzilla", 143, ItFellFromTheSky.instance, 160, 20, true);
 //        EntityRegistry.registerModEntity(EntityPigPart.class, "itfellfromthesky_pigpart", 144, ItFellFromTheSky.instance, 160, 20, true);
 
-        ItFellFromTheSky.channels = NetworkRegistry.INSTANCE.newChannel("ItFellFromTheSky", new ChannelHandler(PacketMeteorSpawn.class, PacketKillMeteorite.class, PacketMeteoriteInfo.class));
+        ItFellFromTheSky.channels = NetworkRegistry.INSTANCE.newChannel("ItFellFromTheSky", new ChannelHandler(PacketMeteorSpawn.class, PacketKillMeteorite.class, PacketMeteoriteInfo.class, PacketRidePig.class));
     }
 }

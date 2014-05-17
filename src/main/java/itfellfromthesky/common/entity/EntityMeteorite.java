@@ -169,14 +169,20 @@ public class EntityMeteorite extends Entity
     @Override
     public void onUpdate()
     {
-        if(ticksExisted > 2000)
-        setDead();
+//        if(ticksExisted > 2000)
+//        setDead();
         if(worldObj.isRemote && ticksExisted == 1)
         {
             lastTickPosY -= yOffset;
             prevPosY -= yOffset;
             posY -= yOffset;
             setPosition(posX, posY, posZ);
+        }
+
+        if(posY < -64D)
+        {
+            setDead();
+            return;
         }
 
         prevRotYaw = rotYaw;
@@ -290,6 +296,14 @@ public class EntityMeteorite extends Entity
                             {
                                 isFluid = true;
                                 blockHardness = 1.0F;
+                            }
+                            if(blockHardness > 100.0F)
+                            {
+                                blockHardness *= 0.25F;
+                            }
+                            if(blockHardness > 10.0F)
+                            {
+                                blockHardness *= 0.5F;
                             }
                             if(blockHardness > 1.0F)
                             {

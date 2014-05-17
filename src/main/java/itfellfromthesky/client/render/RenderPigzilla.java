@@ -43,7 +43,7 @@ public class RenderPigzilla extends Render
         GL11.glRotatef(180F, 0F, 1F, 0F);
 
         GL11.glRotatef(interpolateRotation(pig.prevRenderYawOffset, pig.renderYawOffset, renderTick), 0F, 1F, 0F);
-        modelBase.render(pig, pig.limbSwing, 0.4F, 2F, interpolateRotation(pig.prevRotationYaw, pig.rotationYaw, renderTick), interpolateRotation(pig.prevRotationPitch, pig.rotationPitch, renderTick), 0.0625F);
+        modelBase.render(pig, pig.limbSwing, 0.4F, 2F, interpolateRotation(pig.prevRotationYaw, pig.rotationYaw, renderTick) - interpolateRotation(pig.prevRenderYawOffset, pig.renderYawOffset, renderTick), interpolateRotation(pig.prevRotationPitch, pig.rotationPitch, renderTick), 0.0625F);
 
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glPopMatrix();

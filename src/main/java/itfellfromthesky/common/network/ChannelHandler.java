@@ -1,6 +1,7 @@
 package itfellfromthesky.common.network;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -13,6 +14,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
+
+import java.util.EnumMap;
 
 public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket>
 {
@@ -75,4 +78,11 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<IPacket>
         ItFellFromTheSky.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(dimension);
         ItFellFromTheSky.channels.get(Side.SERVER).writeAndFlush(packet);
     }
+
+    public static void sendToServer(IPacket packet)
+    {
+        ItFellFromTheSky.channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
+        ItFellFromTheSky.channels.get(Side.CLIENT).writeAndFlush(packet);
+    }
+
 }

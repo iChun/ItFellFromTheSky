@@ -128,7 +128,7 @@ public class ModelPigBase extends ModelBase
 
         GL11.glPopMatrix();
 
-        time = (float)EntityTransformer.transformationTime * 1990F / 2000F;
+        time = (float)EntityTransformer.transformationTime * 1980F / 2000F;
 
         if((float)entity.transformationProcess + f > time)
         {

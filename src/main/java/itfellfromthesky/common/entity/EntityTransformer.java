@@ -2,6 +2,9 @@ package itfellfromthesky.common.entity;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import itfellfromthesky.common.core.ChunkLoadHandler;
+import itfellfromthesky.common.network.ChannelHandler;
+import itfellfromthesky.common.network.PacketKillMeteorite;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -133,14 +136,26 @@ public class EntityTransformer extends Entity
             {
                 if(transformationProcess == transformationTime + 10)
                 {
-                    worldObj.spawnEntityInWorld(new EntityPigzilla(worldObj, this));
+                    EntityPigzilla pig = new EntityPigzilla(worldObj, this);
+                    worldObj.spawnEntityInWorld(pig);
+                    ChunkLoadHandler.passChunkloadTicket(this, pig);
                 }
-                if(transformationProcess >= transformationTime + 15)
+                if(transformationProcess >= transformationTime + 13)
                 {
                     setDead();
                 }
             }
         }
+    }
+
+    @Override
+    public void setDead()
+    {
+        if(!worldObj.isRemote)
+        {
+            ChunkLoadHandler.removeTicket(this);
+        }
+        super.setDead();
     }
 
     @Override

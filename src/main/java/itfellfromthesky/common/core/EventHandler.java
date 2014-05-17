@@ -6,6 +6,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import itfellfromthesky.common.ItFellFromTheSky;
 import itfellfromthesky.common.entity.EntityMeteorite;
+import itfellfromthesky.common.entity.EntityPigzilla;
 import itfellfromthesky.common.network.ChannelHandler;
 import itfellfromthesky.common.network.PacketMeteoriteInfo;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -20,7 +21,7 @@ public class EventHandler
     @SubscribeEvent
     public void onEnterChunk(EntityEvent.EnteringChunk event)
     {
-        if(FMLCommonHandler.instance().getEffectiveSide().isServer() && event.entity instanceof EntityMeteorite && !event.entity.isDead)
+        if(FMLCommonHandler.instance().getEffectiveSide().isServer() && (event.entity instanceof EntityMeteorite || event.entity instanceof EntityPigzilla) && !event.entity.isDead)
         {
             ForgeChunkManager.Ticket ticket = ChunkLoadHandler.tickets.get(event.entity);
             if(ticket == null)
@@ -29,7 +30,7 @@ public class EventHandler
                 if(ticket != null)
                 {
                     ticket.bindEntity(event.entity);
-                    ChunkLoadHandler.addTicket((EntityMeteorite)event.entity, ticket);
+                    ChunkLoadHandler.addTicket(event.entity, ticket);
                 }
             }
             if(ticket != null)

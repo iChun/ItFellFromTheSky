@@ -3,6 +3,7 @@ package itfellfromthesky.common.entity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import ibxm.Channel;
+import itfellfromthesky.common.core.ChunkLoadHandler;
 import itfellfromthesky.common.network.ChannelHandler;
 import itfellfromthesky.common.network.PacketRidePig;
 import net.minecraft.block.Block;
@@ -70,7 +71,7 @@ public class EntityPigzilla extends Entity
 
         setLocationAndAngles(trans.posX, trans.boundingBox.minY - trans.height / 2F, trans.posZ, 0.0F, 0.0F);
 
-        prevRenderYawOffset = renderYawOffset = trans.getOriginRot() - 180F;
+        prevRotationYaw = rotationYaw = prevRenderYawOffset = renderYawOffset = trans.getOriginRot() - 180F;
 
         dataWatcher.updateObject(22, renderYawOffset);
 
@@ -185,11 +186,11 @@ public class EntityPigzilla extends Entity
         prevLimbSwingAmount = limbSwingAmount;
         prevRenderYawOffset = renderYawOffset;
 
-        if(ticksExisted < 5)
+        if(ticksExisted < 10)
         {
             if(worldObj.isRemote && ticksExisted == 1)
             {
-                prevRenderYawOffset = renderYawOffset = dataWatcher.getWatchableObjectFloat(22);
+                prevRotationYaw = rotationYaw =prevRenderYawOffset = renderYawOffset = dataWatcher.getWatchableObjectFloat(22);
                 lastTickPosY -= height / 2F;
                 prevPosY -= height / 2F;
                 posY -= height / 2F;
@@ -446,6 +447,10 @@ public class EntityPigzilla extends Entity
         for(EntityPigPart part : parts)
         {
             part.setDead();
+        }
+        if(!worldObj.isRemote)
+        {
+            ChunkLoadHandler.removeTicket(this);
         }
         super.setDead();
     }

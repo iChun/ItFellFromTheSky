@@ -1,6 +1,9 @@
 package itfellfromthesky.common.core;
 
 import itfellfromthesky.common.entity.EntityMeteorite;
+import itfellfromthesky.common.entity.EntityPigzilla;
+import itfellfromthesky.common.entity.EntityTransformer;
+import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeChunkManager;
 
@@ -11,7 +14,7 @@ import java.util.WeakHashMap;
 public class ChunkLoadHandler
     implements ForgeChunkManager.LoadingCallback
 {
-    public static WeakHashMap<EntityMeteorite, ForgeChunkManager.Ticket> tickets = new WeakHashMap<EntityMeteorite, ForgeChunkManager.Ticket>();
+    public static WeakHashMap<Entity, ForgeChunkManager.Ticket> tickets = new WeakHashMap<Entity, ForgeChunkManager.Ticket>();
 
     @Override
     public void ticketsLoaded(List<ForgeChunkManager.Ticket> tickets, World world)
@@ -19,13 +22,13 @@ public class ChunkLoadHandler
         for(ForgeChunkManager.Ticket ticket : tickets)
         {
             boolean saved = false;
-            if(ticket.getEntity() instanceof  EntityMeteorite)
+            Entity ent = ticket.getEntity();
+            if(ent instanceof EntityMeteorite || ent instanceof EntityTransformer || ent instanceof EntityPigzilla)
             {
-                EntityMeteorite meteorite = (EntityMeteorite)ticket.getEntity();
-                if(!meteorite.isDead)
+                if(!ent.isDead)
                 {
                     saved = true;
-                    addTicket(meteorite, ticket);
+                    addTicket(ent, ticket);
                 }
             }
             if(!saved)
@@ -35,7 +38,7 @@ public class ChunkLoadHandler
         }
     }
 
-    public static void removeTicket(EntityMeteorite ent)
+    public static void removeTicket(Entity ent)
     {
         ForgeChunkManager.Ticket ticket = tickets.get(ent);
         if(ticket != null)
@@ -45,15 +48,26 @@ public class ChunkLoadHandler
         tickets.remove(ent);
     }
 
-    public static void addTicket(EntityMeteorite ent, ForgeChunkManager.Ticket ticket)
+    public static void addTicket(Entity ent, ForgeChunkManager.Ticket ticket)
     {
-        if(ent != null)
+        if(ent instanceof EntityMeteorite || ent instanceof EntityTransformer || ent instanceof EntityPigzilla)
         {
             if(tickets.get(ent) != null)
             {
                 removeTicket(ent);
             }
             tickets.put(ent, ticket);
+        }
+    }
+
+    public static void passChunkloadTicket(Entity ent, Entity ent1)
+    {
+        ForgeChunkManager.Ticket ticket = tickets.get(ent);
+        if(ticket != null)
+        {
+            ticket.bindEntity(ent1);
+            tickets.remove(ent);
+            tickets.put(ent1, ticket);
         }
     }
 }

@@ -2,6 +2,7 @@ package itfellfromthesky.common.entity;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import itfellfromthesky.common.core.ChunkLoadHandler;
 import itfellfromthesky.common.network.ChannelHandler;
 import itfellfromthesky.common.network.PacketKillMeteorite;
 import itfellfromthesky.common.network.PacketMeteoriteInfo;
@@ -400,6 +401,16 @@ public class EntityMeteorite extends Entity
                 }
             }
 
+            List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, boundingBox.expand(0.05000000298023224D + Math.abs(motionX), 0.0D + Math.abs(motionY), 0.05000000298023224D + Math.abs(motionZ)));
+            for(int kk = 0; kk < list.size(); kk++)
+            {
+                Entity entity = (Entity)list.get(kk);
+                if(entity.canBePushed())
+                {
+                    applyEntityCollision(entity);
+                }
+            }
+
             updateMotion(motionX, motionY, motionZ);
 
             updateDataWatcher();
@@ -421,7 +432,9 @@ public class EntityMeteorite extends Entity
             {
                 if(stopTime == 20)
                 {
-                    worldObj.spawnEntityInWorld(new EntityTransformer(this, 20));
+                    EntityTransformer trans = new EntityTransformer(this, 60 + rand.nextInt(140));
+                    worldObj.spawnEntityInWorld(trans);
+                    ChunkLoadHandler.passChunkloadTicket(this, trans);
                 }
                 if(stopTime == 25)
                 {
@@ -437,6 +450,38 @@ public class EntityMeteorite extends Entity
         {
             ChannelHandler.sendToDimension(new PacketMeteoriteInfo(this), worldObj.provider.dimensionId);
             dataWatcher.getChanged();
+        }
+    }
+
+    @Override
+    public void applyEntityCollision(Entity par1Entity)
+    {
+        if (par1Entity.riddenByEntity != this && par1Entity.ridingEntity != this)
+        {
+            double d0 = par1Entity.posX - this.posX;
+            double d1 = par1Entity.posZ - this.posZ;
+            double d2 = MathHelper.abs_max(d0, d1);
+
+            if (d2 >= 0.009999999776482582D)
+            {
+                d2 = (double)MathHelper.sqrt_double(d2);
+                d0 /= d2;
+                d1 /= d2;
+                double d3 = 1.0D / d2;
+
+                if (d3 > 1.0D)
+                {
+                    d3 = 1.0D;
+                }
+
+                d0 *= d3;
+                d1 *= d3;
+                d0 *= 0.05000000074505806D;
+                d1 *= 0.05000000074505806D;
+                d0 *= (double)(1.0F - this.entityCollisionReduction);
+                d1 *= (double)(1.0F - this.entityCollisionReduction);
+                par1Entity.addVelocity(d0 * 7.5D, 0.5D, d1 * 7.5D);
+            }
         }
     }
 
@@ -469,6 +514,7 @@ public class EntityMeteorite extends Entity
         if(!worldObj.isRemote)
         {
             ChannelHandler.sendToDimension(new PacketKillMeteorite(getEntityId()), worldObj.provider.dimensionId);
+            ChunkLoadHandler.removeTicket(this);
             super.setDead();
         }
         if(worldObj.isRemote && canSetDead)

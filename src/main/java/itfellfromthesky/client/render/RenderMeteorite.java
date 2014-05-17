@@ -1,5 +1,6 @@
 package itfellfromthesky.client.render;
 
+import itfellfromthesky.client.model.ModelMeteorite;
 import itfellfromthesky.common.entity.EntityBlock;
 import itfellfromthesky.common.entity.EntityMeteorite;
 import net.minecraft.block.BlockAnvil;
@@ -17,7 +18,9 @@ import org.lwjgl.opengl.GL11;
 
 public class RenderMeteorite extends Render
 {
-    public RenderBlocks renderBlock = new RenderBlocks();
+    public ModelMeteorite model = new ModelMeteorite();
+
+    public static final ResourceLocation pigBlock = new ResourceLocation("itfellfromthesky", "textures/model/meteorite.png");
 
     //TODO set shadow sized based off bounding box of the block...?
     public RenderMeteorite()
@@ -27,9 +30,7 @@ public class RenderMeteorite extends Render
 
     public void doRender(EntityMeteorite entBlock, double posX, double posY, double posZ, float par8, float renderTick)
     {
-        int i = MathHelper.floor_double(entBlock.posX);
-        int j = MathHelper.floor_double(entBlock.posY);
-        int k = MathHelper.floor_double(entBlock.posZ);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -45,18 +46,12 @@ public class RenderMeteorite extends Render
 
         GL11.glDisable(GL11.GL_LIGHTING);
 
-//        int ii = entBlock.getBrightnessForRender(renderTick);
-//        int jj = ii % 0x10000;
-//        int kk = ii / 0x10000;
-//        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)jj / 1.0F, (float)kk / 1.0F);
+        GL11.glScalef(40F, 40F, 40F);
 
-        renderBlock.blockAccess = entBlock.worldObj;
-        renderBlock.useInventoryTint = true;
+        model.render(entBlock, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
 
-        GL11.glScalef(20F, 20F, 20F);
-
-        renderBlock.setRenderBoundsFromBlock(Blocks.iron_block);
-        renderBlock.renderBlockAsItem(Blocks.iron_block, 0, 1.0F);
+//        renderBlock.setRenderBoundsFromBlock(Blocks.iron_block);
+//        renderBlock.renderBlockAsItem(Blocks.mob_spawner, 0, 1.0F);
 
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glPopMatrix();
@@ -74,7 +69,7 @@ public class RenderMeteorite extends Render
     @Override
     protected ResourceLocation getEntityTexture(Entity var1)
     {
-        return TextureMap.locationBlocksTexture;
+        return pigBlock;
     }
 
     private float interpolateRotation(float par1, float par2, float par3)

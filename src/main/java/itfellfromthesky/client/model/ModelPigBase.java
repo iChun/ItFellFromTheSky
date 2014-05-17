@@ -106,7 +106,7 @@ public class ModelPigBase extends ModelBase
 
         if(entity.transformationProcess + f > entity.transformationTime / 2 + 20)
         {
-            progress = MathHelper.clamp_float(((float)(entity.transformationProcess + f) - ((float)entity.transformationTime / 2F + 20F)) / (((float)entity.transformationTime * 1900F / 2000F) - ((float)entity.transformationTime / 2F + 20F)), 0.0F, 1.0F);
+            progress = MathHelper.clamp_float(((float)(entity.transformationProcess + f) - ((float)entity.transformationTime / 2F + 20F)) / (((float)entity.transformationTime * 1800F / 2000F) - ((float)entity.transformationTime / 2F + 20F)), 0.0F, 1.0F);
         }
 
         GL11.glRotatef(90F + (-90F * progress), 0F, 1F, 0F);

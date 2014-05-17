@@ -52,7 +52,7 @@ public class EntityTransformer extends Entity
         dataWatcher.addObject(20, -1);//meteor ID
         dataWatcher.addObject(21, (byte)0);//canTransform
         dataWatcher.addObject(22, 0F);//body rotation
-        dataWatcher.addObject(23, 0);
+        dataWatcher.addObject(23, 0); //transformation process when player first joins.
     }
 
     public float getOriginRot()

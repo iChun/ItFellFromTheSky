@@ -305,7 +305,7 @@ public class EntityPigzilla extends Entity
         {
             faceEntity(watchedEntity, 0.6F, 0.6F);
         }
-        else
+        else if(!worldObj.isRemote || worldObj.isRemote && getWatchedEntityId() == -1)
         {
             faceEntity(null, 0.6F, 0.6F);
         }

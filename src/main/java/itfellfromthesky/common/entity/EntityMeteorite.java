@@ -405,7 +405,7 @@ public class EntityMeteorite extends Entity
             for(int kk = 0; kk < list.size(); kk++)
             {
                 Entity entity = (Entity)list.get(kk);
-                if(entity.canBePushed())
+                if(!(entity instanceof EntityBlock) && entity.canBePushed())
                 {
                     applyEntityCollision(entity);
                 }
@@ -432,7 +432,7 @@ public class EntityMeteorite extends Entity
             {
                 if(stopTime == 20)
                 {
-                    EntityTransformer trans = new EntityTransformer(this, 60 + rand.nextInt(140));
+                    EntityTransformer trans = new EntityTransformer(this, 200 + rand.nextInt(400));
                     worldObj.spawnEntityInWorld(trans);
                     ChunkLoadHandler.passChunkloadTicket(this, trans);
                 }

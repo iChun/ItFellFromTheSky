@@ -54,12 +54,6 @@ public class EntityMeteorite extends Entity
         preventEntitySpawning = true;
         ignoreFrustumCheck = true;
         renderDistanceWeight = 60D;
-
-//        motionX = 1D;
-//        motionZ = -1D;
-//        motionX = rand.nextDouble() * 2 - 1D;
-//        motionZ = rand.nextDouble() * 2 - 1D;
-        motionY = -0.1D;
     }
 
     public EntityMeteorite(World world, double x, double y, double z)
@@ -172,6 +166,8 @@ public class EntityMeteorite extends Entity
     {
 //        if(ticksExisted > 2000)
 //        setDead();
+//        if(!worldObj.isRemote)
+//        System.out.println(this);
         if(worldObj.isRemote && ticksExisted == 1)
         {
             lastTickPosY -= yOffset;
@@ -419,6 +415,19 @@ public class EntityMeteorite extends Entity
         {
             moveEntity(getMoX(), getMoY(), getMoZ());
 //            System.out.println(posY);
+            if(worldObj.weatherEffects.contains(this))
+            {
+                List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, boundingBox.contract(1D, 1D, 1D));
+                for(int i = 0; i < list.size(); i++)
+                {
+                    if(list.get(i) instanceof EntityTransformer && ((EntityTransformer)list.get(i)).ticksExisted > 10)
+                    {
+                        canSetDead = true;
+                        setDead();
+                        return;
+                    }
+                }
+            }
         }
 
         if(stopped)

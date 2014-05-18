@@ -47,7 +47,7 @@ public class EventHandler
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onEntitySpawn(EntityJoinWorldEvent event)
     {
-        if(event.entity instanceof EntityMeteorite && FMLCommonHandler.instance().getEffectiveSide().isClient() && !event.entity.isDead)
+        if(event.entity.worldObj.isRemote && event.entity instanceof EntityMeteorite && FMLCommonHandler.instance().getEffectiveSide().isClient() && !event.entity.isDead)
         {
             event.setCanceled(true);
             if(!event.entity.worldObj.weatherEffects.contains(event.entity))

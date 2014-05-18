@@ -30,7 +30,7 @@ public class RenderTransformer extends Render
 
     public void doRender(EntityTransformer transformer, double posX, double posY, double posZ, float par8, float renderTick)
     {
-        if(transformer.ticksExisted <= 2)
+        if(transformer.ticksExisted <= 3)
         {
             return;
         }

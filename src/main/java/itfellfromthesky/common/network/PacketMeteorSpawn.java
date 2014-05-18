@@ -91,7 +91,7 @@ public class PacketMeteorSpawn extends IPacket
         }
         if(!exists)
         {
-            Minecraft.getMinecraft().theWorld.weatherEffects.add(exists);
+            Minecraft.getMinecraft().theWorld.weatherEffects.add(meteorite);
         }
     }
 }

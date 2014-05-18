@@ -182,6 +182,7 @@ public class EntityPigzilla extends Entity
     @Override
     public void onUpdate()
     {
+        setDead();
         super.onUpdate();
         prevLimbSwingAmount = limbSwingAmount;
         prevRenderYawOffset = renderYawOffset;

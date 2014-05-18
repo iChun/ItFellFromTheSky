@@ -10,6 +10,8 @@ import itfellfromthesky.common.core.ChunkLoadHandler;
 import itfellfromthesky.common.core.CommonProxy;
 import itfellfromthesky.common.core.EventHandler;
 import itfellfromthesky.common.core.ObfHelper;
+import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.Level;
@@ -35,6 +37,10 @@ public class ItFellFromTheSky
     private static final Logger logger = LogManager.getLogger("ItFellFromTheSky");
 
     public static EnumMap<Side, FMLEmbeddedChannel> channels;
+
+    public static Block blockCompactPorkchop;
+
+    public static CreativeTabs creativeTabPorkchop;
 
     @Mod.EventHandler
     public void preLoad(FMLPreInitializationEvent event)

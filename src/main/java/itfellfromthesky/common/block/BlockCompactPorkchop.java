@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
@@ -70,7 +71,8 @@ public class BlockCompactPorkchop extends Block
     {
         if(!world.isRemote)
         {
-            if(player.getHeldItem() != null && player.getHeldItem().getItem() == Items.nether_star)
+            ItemStack is = player.getHeldItem();
+            if(is != null && is.getItem() == Items.nether_star)
             {
                 double ranX = world.rand.nextDouble() * 2D - 1D;
                 double ranZ = world.rand.nextDouble() * 2D - 1D;
@@ -127,8 +129,17 @@ public class BlockCompactPorkchop extends Block
 
                 ChannelHandler.sendToDimension(new PacketMeteorSpawn(meteorite.getEntityId(), meteorite.posX, meteorite.posY, meteorite.posZ, meteorite.motionX, meteorite.motionY, meteorite.motionZ, meteorite.rotYaw, meteorite.rotPitch), player.dimension);
 
-                world.playAuxSFX(2001, i, j, k, Block.getIdFromBlock(ItFellFromTheSky.blockCompactPorkchop));
-                world.setBlockToAir(i, j, k);
+                if(!player.capabilities.isCreativeMode)
+                {
+                    is.stackSize--;
+                    if(is.stackSize <= 0)
+                    {
+                        player.setCurrentItemOrArmor(0, null);
+                    }
+
+                    world.playAuxSFX(2001, i, j, k, Block.getIdFromBlock(ItFellFromTheSky.blockCompactPorkchop));
+                    world.setBlockToAir(i, j, k);
+                }
             }
             else
             {

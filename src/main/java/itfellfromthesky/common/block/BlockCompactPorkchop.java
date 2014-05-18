@@ -69,79 +69,10 @@ public class BlockCompactPorkchop extends Block
     @Override
     public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer player, int side, float hitVecX, float hitVecY, float hitVecZ)
     {
-        if(!world.isRemote)
+        ItemStack is = player.getHeldItem();
+        if(is == null)
         {
-            ItemStack is = player.getHeldItem();
-            if(is != null && is.getItem() == Items.nether_star)
-            {
-                double ranX = world.rand.nextDouble() * 2D - 1D;
-                double ranZ = world.rand.nextDouble() * 2D - 1D;
-
-                float f2 = MathHelper.sqrt_double(ranX * ranX + ranZ * ranZ);
-                if(f2 < 1F)
-                {
-                    ranX /= (double)f2;
-                    ranZ /= (double)f2;
-                }
-
-                double ranY = -world.rand.nextDouble();
-
-                f2 = MathHelper.sqrt_double(ranY * ranY);
-                if(f2 < 0.1F)
-                {
-                    ranY /= (double)f2;
-                    ranY *= 0.1F;
-                }
-
-                double offsetX = (50D * ranX / ranY);
-                double offsetY = 45D;
-                double offsetZ = (50D * ranZ / ranY);
-
-                double dist = Math.sqrt(offsetX * offsetX + offsetZ + offsetZ);
-
-                offsetX /= dist;
-                offsetY /= dist;
-                offsetZ /= dist;
-                offsetX *= 150D;
-                offsetY *= 150D;
-                offsetZ *= 150D;
-
-//                EntityMeteorite meteorite = new EntityMeteorite(world, i + 0.5D +50D, j + 0.5D + 50D, k + 0.5D + 50D);
-                EntityMeteorite meteorite = new EntityMeteorite(world, i + 0.5D + offsetX, j + 0.5D + offsetY, k + 0.5D + offsetZ);
-//                EntityMeteorite meteorite = new EntityMeteorite(world, i + 0.5D - (ranX * 200D / -(ranY * 2)), j + 0.5D + (200D * -(ranY * 2)), k + 0.5D - (ranZ * 200D / -(ranY * 2)));
-
-                meteorite.motionX = ranX;
-                meteorite.motionZ = ranZ;
-
-                meteorite.motionY = ranY;
-
-                meteorite.forceSpawn = true;
-
-                ForgeChunkManager.Ticket ticket = ForgeChunkManager.requestTicket(ItFellFromTheSky.instance, world, ForgeChunkManager.Type.ENTITY);
-                if(ticket != null)
-                {
-                    ticket.bindEntity(meteorite);
-                    ChunkLoadHandler.addTicket(meteorite, ticket);
-                    ForgeChunkManager.forceChunk(ticket, new ChunkCoordIntPair(MathHelper.floor_double(meteorite.posX) >> 4, MathHelper.floor_double(meteorite.posZ) >> 4));
-                }
-
-                world.spawnEntityInWorld(meteorite);
-
-                ChannelHandler.sendToDimension(new PacketMeteorSpawn(meteorite.getEntityId(), meteorite.posX, meteorite.posY, meteorite.posZ, meteorite.motionX, meteorite.motionY, meteorite.motionZ, meteorite.rotYaw, meteorite.rotPitch), player.dimension);
-
-                world.playAuxSFX(2001, i, j, k, Block.getIdFromBlock(ItFellFromTheSky.blockCompactPorkchop));
-                if(!player.capabilities.isCreativeMode)
-                {
-                    is.stackSize--;
-                    if(is.stackSize <= 0)
-                    {
-                        player.setCurrentItemOrArmor(0, null);
-                    }
-
-                    world.setBlockToAir(i, j, k);
-                }
-            }
-            else
+            if(!world.isRemote)
             {
                 ArrayList<EntityPigzilla> list = new ArrayList<EntityPigzilla>();
                 for(Map.Entry<Entity, ForgeChunkManager.Ticket> e : ChunkLoadHandler.tickets.entrySet())
@@ -185,7 +116,81 @@ public class BlockCompactPorkchop extends Block
 
                 player.addChatMessage(chat);
             }
+            return true;
         }
-        return true;
+        else if(is.getItem() == Items.nether_star)
+        {
+            if(!world.isRemote)
+            {
+                double ranX = world.rand.nextDouble() * 2D - 1D;
+                double ranZ = world.rand.nextDouble() * 2D - 1D;
+
+                float f2 = MathHelper.sqrt_double(ranX * ranX + ranZ * ranZ);
+                if(f2 < 1F)
+                {
+                    ranX /= (double)f2;
+                    ranZ /= (double)f2;
+                }
+
+                double ranY = -world.rand.nextDouble();
+
+                f2 = MathHelper.sqrt_double(ranY * ranY);
+                if(f2 < 0.1F)
+                {
+                    ranY /= (double)f2;
+                    ranY *= 0.1F;
+                }
+
+                double offsetX = (50D * ranX / ranY);
+                double offsetY = 45D;
+                double offsetZ = (50D * ranZ / ranY);
+
+                double dist = Math.sqrt(offsetX * offsetX + offsetZ + offsetZ);
+
+                offsetX /= dist;
+                offsetY /= dist;
+                offsetZ /= dist;
+                offsetX *= 150D;
+                offsetY *= 150D;
+                offsetZ *= 150D;
+
+                //                EntityMeteorite meteorite = new EntityMeteorite(world, i + 0.5D +50D, j + 0.5D + 50D, k + 0.5D + 50D);
+                EntityMeteorite meteorite = new EntityMeteorite(world, i + 0.5D + offsetX, j + 0.5D + offsetY, k + 0.5D + offsetZ);
+                //                EntityMeteorite meteorite = new EntityMeteorite(world, i + 0.5D - (ranX * 200D / -(ranY * 2)), j + 0.5D + (200D * -(ranY * 2)), k + 0.5D - (ranZ * 200D / -(ranY * 2)));
+
+                meteorite.motionX = ranX;
+                meteorite.motionZ = ranZ;
+
+                meteorite.motionY = ranY;
+
+                meteorite.forceSpawn = true;
+
+                ForgeChunkManager.Ticket ticket = ForgeChunkManager.requestTicket(ItFellFromTheSky.instance, world, ForgeChunkManager.Type.ENTITY);
+                if(ticket != null)
+                {
+                    ticket.bindEntity(meteorite);
+                    ChunkLoadHandler.addTicket(meteorite, ticket);
+                    ForgeChunkManager.forceChunk(ticket, new ChunkCoordIntPair(MathHelper.floor_double(meteorite.posX) >> 4, MathHelper.floor_double(meteorite.posZ) >> 4));
+                }
+
+                world.spawnEntityInWorld(meteorite);
+
+                ChannelHandler.sendToDimension(new PacketMeteorSpawn(meteorite.getEntityId(), meteorite.posX, meteorite.posY, meteorite.posZ, meteorite.motionX, meteorite.motionY, meteorite.motionZ, meteorite.rotYaw, meteorite.rotPitch), player.dimension);
+
+                world.playAuxSFX(2001, i, j, k, Block.getIdFromBlock(ItFellFromTheSky.blockCompactPorkchop));
+                if(!player.capabilities.isCreativeMode)
+                {
+                    is.stackSize--;
+                    if(is.stackSize <= 0)
+                    {
+                        player.setCurrentItemOrArmor(0, null);
+                    }
+
+                    world.setBlockToAir(i, j, k);
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

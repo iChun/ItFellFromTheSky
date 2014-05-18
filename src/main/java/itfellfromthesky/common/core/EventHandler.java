@@ -9,6 +9,7 @@ import itfellfromthesky.common.entity.EntityMeteorite;
 import itfellfromthesky.common.entity.EntityPigzilla;
 import itfellfromthesky.common.network.ChannelHandler;
 import itfellfromthesky.common.network.PacketMeteoriteInfo;
+import net.minecraft.entity.Entity;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -52,7 +53,21 @@ public class EventHandler
             event.setCanceled(true);
             if(!event.entity.worldObj.weatherEffects.contains(event.entity))
             {
-                event.entity.worldObj.weatherEffects.add(event.entity);
+                boolean has = false;
+                for(int i = 0; i < event.entity.worldObj.weatherEffects.size(); i++)
+                {
+                    Entity ent = (Entity)event.entity.worldObj.weatherEffects.get(i);
+                    if(ent instanceof EntityMeteorite && ent.getEntityId() == event.entity.getEntityId())
+                    {
+                        has = true;
+                        ent.setLocationAndAngles(event.entity.posX, event.entity.posY, event.entity.posZ, 0F, 0F);
+                        break;
+                    }
+                }
+                if(!has)
+                {
+                    event.entity.worldObj.weatherEffects.add(event.entity);
+                }
             }
         }
     }

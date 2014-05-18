@@ -182,7 +182,6 @@ public class EntityPigzilla extends Entity
     @Override
     public void onUpdate()
     {
-        setDead();
         super.onUpdate();
         prevLimbSwingAmount = limbSwingAmount;
         prevRenderYawOffset = renderYawOffset;
@@ -256,7 +255,7 @@ public class EntityPigzilla extends Entity
                 if(rand.nextFloat() < 0.15F)
                 {
                     setIdle(true);
-                    idleTimeout = 40 * rand.nextInt(20 * 20);
+                    idleTimeout = 40 + rand.nextInt(20 * 20);
                     setTargetedRenderYawOffset(rand.nextFloat() * 360F);
                 }
                 else
@@ -317,7 +316,9 @@ public class EntityPigzilla extends Entity
             motionX *= 0.8D;
             motionZ *= 0.8D;
 
-            if(!worldObj.isRemote && idleTimeout == 0)
+//            System.out.println(idleTimeout);
+
+            if(!worldObj.isRemote && idleTimeout <= 0)
             {
                 setIdle(false);
             }

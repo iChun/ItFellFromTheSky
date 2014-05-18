@@ -2,12 +2,14 @@ package itfellfromthesky.common.entity;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import itfellfromthesky.client.entity.EntitySmokeParticle;
 import itfellfromthesky.common.core.ChunkLoadHandler;
 import itfellfromthesky.common.network.ChannelHandler;
 import itfellfromthesky.common.network.PacketKillMeteorite;
 import itfellfromthesky.common.network.PacketMeteoriteInfo;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
@@ -345,7 +347,6 @@ public class EntityMeteorite extends Entity
                                     mZ = motionZ * (2D + (0.5D * rand.nextDouble())) * -1D + offsetZ * 0.5D;
                                     mY = Math.sqrt(motionX * motionX + motionZ * motionZ) * 0.5D + (rand.nextDouble() * 0.5D);
                                 }
-                                //TODO perpendicular motion?
                                 worldObj.spawnEntityInWorld(new EntityBlock(worldObj, i, j, k, mX, mY, mZ, 30));
                             }
                             else
@@ -428,6 +429,7 @@ public class EntityMeteorite extends Entity
                     }
                 }
             }
+            spawnParticles();
         }
 
         if(stopped)
@@ -450,6 +452,17 @@ public class EntityMeteorite extends Entity
                     setDead();
                 }
             }
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void spawnParticles()
+    {
+        double velo = Math.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
+
+        if(!stopped && rand.nextDouble() < 0.25D + velo * 0.5D)
+        {
+            Minecraft.getMinecraft().effectRenderer.addEffect(new EntitySmokeParticle(worldObj, posX + (rand.nextDouble() * 5D - 2.5D), posY + (rand.nextDouble() * 5D - 2.5D), posZ + (rand.nextDouble() * 5D - 2.5D), 0.0D, 0.0D, 0.0D));
         }
     }
 

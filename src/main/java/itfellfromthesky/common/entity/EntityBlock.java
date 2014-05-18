@@ -41,7 +41,6 @@ public class EntityBlock extends Entity
 
     public Block block;
 
-    //TODO remember to set this when reading a tile's TE.
     public NBTTagCompound tileEntityNBT;
 
     public int timeout;
@@ -632,7 +631,6 @@ public class EntityBlock extends Entity
         return 0.0F;
     }
 
-    //TODO rethink this
     @SideOnly(Side.CLIENT)
     @Override
     public boolean canRenderOnFire()

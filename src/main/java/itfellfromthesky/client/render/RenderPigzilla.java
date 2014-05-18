@@ -14,7 +14,6 @@ public class RenderPigzilla extends Render
 
     public ModelPig modelBase;
 
-    //TODO set shadow sized based off bounding box of the block...?
     public RenderPigzilla()
     {
         this.shadowSize = 10F;

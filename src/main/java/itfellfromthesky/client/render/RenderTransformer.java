@@ -20,7 +20,6 @@ public class RenderTransformer extends Render
     public ModelPigBase modelBase;
     public ModelMeteorite modelMeteorite;
 
-    //TODO set shadow sized based off bounding box of the block...?
     public RenderTransformer()
     {
         this.shadowSize = 10F;
@@ -54,6 +53,7 @@ public class RenderTransformer extends Render
         bindTexture(RenderMeteorite.pigBlock);
 
         GL11.glPushMatrix();
+        GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
         GL11.glScalef(-40.01F, -40.01F, 40.01F);
 
         GL11.glRotatef(90F, 0F, 1F, 0F);
@@ -66,6 +66,7 @@ public class RenderTransformer extends Render
 
         modelMeteorite.render(transformer, 0F, 0F, 0F, 0F, 0F, 0.0625F);
 
+        GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
         GL11.glPopMatrix();
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);

@@ -22,7 +22,6 @@ public class RenderMeteorite extends Render
 
     public static final ResourceLocation pigBlock = new ResourceLocation("itfellfromthesky", "textures/model/meteorite.png");
 
-    //TODO set shadow sized based off bounding box of the block...?
     public RenderMeteorite()
     {
         this.shadowSize = 10F;
@@ -46,12 +45,38 @@ public class RenderMeteorite extends Render
 
         GL11.glDisable(GL11.GL_LIGHTING);
 
+        GL11.glPushMatrix();
         GL11.glScalef(40F, 40F, 40F);
 
         model.render(entBlock, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
 
 //        renderBlock.setRenderBoundsFromBlock(Blocks.iron_block);
 //        renderBlock.renderBlockAsItem(Blocks.mob_spawner, 0, 1.0F);
+
+        GL11.glPopMatrix();
+
+        if(!entBlock.stopped)
+        {
+            GL11.glPushMatrix();
+            GL11.glScalef(42F, 42F, 42F);
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
+
+            float velo = MathHelper.clamp_float((entBlock.ticksExisted + renderTick) / 200F, 0.0F, 1.0F);
+
+            float alpha = (1.0F - velo) * 0.7F;
+
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, alpha);
+
+            model.render(entBlock, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
+
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+            GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+
+            GL11.glPopMatrix();
+        }
 
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glPopMatrix();

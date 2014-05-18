@@ -26,7 +26,7 @@ import java.util.EnumMap;
             )
 public class ItFellFromTheSky
 {
-    public static final String version = "3.0.0";
+    public static final String version = "0.1.0";
 
     @Mod.Instance("ItFellFromTheSky")
     public static ItFellFromTheSky instance;
@@ -73,6 +73,6 @@ public class ItFellFromTheSky
     public static void console(String s, boolean warning)
     {
         StringBuilder sb = new StringBuilder();
-        logger.log(warning ? Level.WARN : Level.INFO, sb.append("[").append(version).append("] ").append(s).toString());
+        logger.log(warning ? Level.WARN : Level.INFO, sb.append("[").append(version).append("-ModJam] ").append(s).toString());
     }
 }

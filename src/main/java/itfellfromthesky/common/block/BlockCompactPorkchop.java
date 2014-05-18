@@ -129,6 +129,7 @@ public class BlockCompactPorkchop extends Block
 
                 ChannelHandler.sendToDimension(new PacketMeteorSpawn(meteorite.getEntityId(), meteorite.posX, meteorite.posY, meteorite.posZ, meteorite.motionX, meteorite.motionY, meteorite.motionZ, meteorite.rotYaw, meteorite.rotPitch), player.dimension);
 
+                world.playAuxSFX(2001, i, j, k, Block.getIdFromBlock(ItFellFromTheSky.blockCompactPorkchop));
                 if(!player.capabilities.isCreativeMode)
                 {
                     is.stackSize--;
@@ -137,7 +138,6 @@ public class BlockCompactPorkchop extends Block
                         player.setCurrentItemOrArmor(0, null);
                     }
 
-                    world.playAuxSFX(2001, i, j, k, Block.getIdFromBlock(ItFellFromTheSky.blockCompactPorkchop));
                     world.setBlockToAir(i, j, k);
                 }
             }

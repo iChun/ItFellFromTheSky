@@ -17,7 +17,6 @@ public class RenderBlock extends Render
 {
     public RenderBlocks renderBlock = new RenderBlocks();
 
-    //TODO set shadow sized based off bounding box of the block...?
     public RenderBlock()
     {
         this.shadowSize = 0.5F;

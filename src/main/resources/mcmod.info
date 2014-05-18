@@ -1,0 +1,21 @@
+[
+{
+  "modid" : "ItFellFromTheSky",
+  "name" : "ItFellFromTheSky",
+  "version" : "${version}",
+  "url" : "http://www.ichun.us/",
+  "credits" : "",
+  "authors": [
+    "iChun"
+  ],
+  "description": "It fell from the sky... and left a hole in the ground.",
+  "logoFile" : "",
+  "updateUrl" : "",
+  "parent" : "",
+  "screenshots": [
+  ],
+  "dependancies": [
+    "Forge"
+  ]
+}
+]

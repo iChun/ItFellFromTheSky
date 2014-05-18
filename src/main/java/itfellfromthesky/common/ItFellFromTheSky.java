@@ -26,7 +26,7 @@ import java.util.EnumMap;
             )
 public class ItFellFromTheSky
 {
-    public static final String version = "0.1.1";
+    public static final String version = "0.1.2";
 
     @Mod.Instance("ItFellFromTheSky")
     public static ItFellFromTheSky instance;

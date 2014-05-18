@@ -154,6 +154,15 @@ public class BlockCompactPorkchop extends Block
                 offsetY *= 150D;
                 offsetZ *= 150D;
 
+                if(j + 0.5D + offsetY > world.getHeight())
+                {
+                    double overShot = (j + 0.5D + offsetY) - world.getHeight();
+                    double dec = (1.0D - (overShot / offsetY));
+                    offsetX *= dec;
+                    offsetY *= dec;
+                    offsetZ *= dec;
+                }
+
                 //                EntityMeteorite meteorite = new EntityMeteorite(world, i + 0.5D +50D, j + 0.5D + 50D, k + 0.5D + 50D);
                 EntityMeteorite meteorite = new EntityMeteorite(world, i + 0.5D + offsetX, j + 0.5D + offsetY, k + 0.5D + offsetZ);
                 //                EntityMeteorite meteorite = new EntityMeteorite(world, i + 0.5D - (ranX * 200D / -(ranY * 2)), j + 0.5D + (200D * -(ranY * 2)), k + 0.5D - (ranZ * 200D / -(ranY * 2)));

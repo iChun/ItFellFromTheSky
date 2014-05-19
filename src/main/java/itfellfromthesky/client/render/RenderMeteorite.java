@@ -66,9 +66,12 @@ public class RenderMeteorite extends Render
 
             float alpha = (1.0F - velo) * 0.7F;
 
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, alpha);
+            if(alpha > 0.0F)
+            {
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, alpha);
 
-            model.render(entBlock, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
+                model.render(entBlock, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0625F);
+            }
 
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 

@@ -51,6 +51,8 @@ public class EntityPigzilla extends Entity
 
     public EntityLivingBase watchedEntity;
 
+    public boolean newSpawn;
+
     public EntityPigzilla(World world)
     {
         super(world);
@@ -85,6 +87,8 @@ public class EntityPigzilla extends Entity
         pZ *= 10D / 16D * 40D;
 
         setPosition(posX - pX, posY, posZ - pZ);
+
+        newSpawn = true;
     }
 
     @Override
@@ -196,6 +200,15 @@ public class EntityPigzilla extends Entity
                 posY -= height / 2F;
             }
             return;
+        }
+
+        if(ticksExisted < 60)
+        {
+            stepHeight = 10.5F;
+        }
+        else
+        {
+            stepHeight = 2.2F;
         }
 //        faceEntity(Minecraft.getMinecraft().thePlayer, 0.6F, 0.6F);
 
@@ -755,16 +768,23 @@ public class EntityPigzilla extends Entity
             if(i > 1)
             {
                 bb.offset(0D, stepHeight + 0.1D - (fallDistance / 4F), 0D);
-                bb.expand(1F / 16F * 40D, 0.0D, 1F / 16F * 40D);
+//                bb = bb.expand(1F / 16F * 40D, 0.0D, 1F / 16F * 40D);
+            }
+            if(i == 1 && ticksExisted < 60 && newSpawn)
+            {
+                bb = bb.addCoord(0.0D, -3D / 16D * 40D, 0.0F);
             }
             boxes.addAll(getCollidingBoundingBoxes(bb.addCoord(motionX, motionY, motionZ)));
         }
 
-        for(int i = boxes.size() - 1; i >= 0; i--)
+        if(!(ticksExisted < 60 && newSpawn))
         {
-            if(boxes.get(i) == null || ((AxisAlignedBB)boxes.get(i)).intersectsWith(boundingBox))
+            for(int i = boxes.size() - 1; i >= 0; i--)
             {
-                boxes.remove(i);
+                if(boxes.get(i) == null || ((AxisAlignedBB)boxes.get(i)).intersectsWith(boundingBox.contract(1D, 1D, 1D)))
+                {
+                    boxes.remove(i);
+                }
             }
         }
 

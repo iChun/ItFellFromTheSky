@@ -44,6 +44,7 @@ public class ItemBlockCompactPorkchop extends ItemBlock
         if(tab != null && tab.equals(ItFellFromTheSky.creativeTabPorkchop))
         {
             list.add(new ItemStack(Items.nether_star, 1, 0));
+            list.add(new ItemStack(Items.carrot_on_a_stick, 1, 0));
         }
     }
 

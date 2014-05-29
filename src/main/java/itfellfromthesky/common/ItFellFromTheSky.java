@@ -6,14 +6,19 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.relauncher.Side;
+
 import itfellfromthesky.common.core.ChunkLoadHandler;
 import itfellfromthesky.common.core.CommonProxy;
 import itfellfromthesky.common.core.EventHandler;
 import itfellfromthesky.common.core.ObfHelper;
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
+
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,12 +44,23 @@ public class ItFellFromTheSky
     public static EnumMap<Side, FMLEmbeddedChannel> channels;
 
     public static Block blockCompactPorkchop;
+    
+    public static boolean requireOp, requireCommands;
 
     public static CreativeTabs creativeTabPorkchop;
 
     @Mod.EventHandler
     public void preLoad(FMLPreInitializationEvent event)
     {
+        Configuration config = new Configuration(event.getSuggestedConfigurationFile());
+        
+        config.load();
+        
+        requireOp = config.get("Options", "requireOp", true, "Require players to be opped on servers").getBoolean(true);
+        requireCommands = config.get("Options", "requireCommands", false, "Require commands to be enabled. Only applies to single player").getBoolean(false);
+        
+        config.save();
+        
         ObfHelper.detectObfuscation();
 
         proxy.initMod();

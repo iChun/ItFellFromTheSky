@@ -12,6 +12,8 @@ import cpw.mods.fml.relauncher.Side;
 import ichun.common.core.config.Config;
 import ichun.common.core.config.ConfigHandler;
 import ichun.common.core.config.IConfigUser;
+import ichun.common.core.updateChecker.ModVersionChecker;
+import ichun.common.core.updateChecker.ModVersionInfo;
 import ichun.common.iChunUtil;
 import itfellfromthesky.common.core.ChunkLoadHandler;
 import itfellfromthesky.common.core.CommonProxy;
@@ -74,6 +76,8 @@ public class ItFellFromTheSky
         EventHandler handler = new EventHandler();
         MinecraftForge.EVENT_BUS.register(handler);
         ForgeChunkManager.setForcedChunkLoadingCallback(this, new ChunkLoadHandler());
+
+        ModVersionChecker.register_iChunMod(new ModVersionInfo("ItFellFromTheSky", "1.7", version, false));
     }
 
     @Mod.EventHandler

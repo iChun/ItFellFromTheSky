@@ -3,12 +3,13 @@ package itfellfromthesky.common.network;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.relauncher.Side;
+import ichun.common.core.network.AbstractPacket;
 import io.netty.buffer.ByteBuf;
 import itfellfromthesky.common.entity.EntityPigzilla;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class PacketRidePig extends IPacket
+public class PacketRidePig extends AbstractPacket
 {
     public int entId;
     public String playerName;
@@ -29,11 +30,15 @@ public class PacketRidePig extends IPacket
     }
 
     @Override
-    public void readFrom(ByteBuf buffer, Side side, EntityPlayer player)
+    public void readFrom(ByteBuf buffer, Side side)
     {
         entId = buffer.readInt();
         playerName = ByteBufUtils.readUTF8String(buffer);
+    }
 
+    @Override
+    public void execute(Side side, EntityPlayer player)
+    {
         EntityPlayer player1 = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerForUsername(playerName);
         if(player1.equals(player))
         {

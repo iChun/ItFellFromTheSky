@@ -2,9 +2,9 @@ package itfellfromthesky.common.entity;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import ibxm.Channel;
+import ichun.common.core.network.PacketHandler;
+import itfellfromthesky.common.ItFellFromTheSky;
 import itfellfromthesky.common.core.ChunkLoadHandler;
-import itfellfromthesky.common.network.ChannelHandler;
 import itfellfromthesky.common.network.PacketRidePig;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -12,12 +12,10 @@ import net.minecraft.command.IEntitySelector;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
@@ -53,6 +51,8 @@ public class EntityPigzilla extends Entity
 
     public boolean newSpawn;
 
+    public Object hat;
+
     public EntityPigzilla(World world)
     {
         super(world);
@@ -63,6 +63,11 @@ public class EntityPigzilla extends Entity
         ignoreFrustumCheck = true;
 
         stepHeight = 2.2F;
+
+        if(ItFellFromTheSky.hasHatsMod)
+        {
+            hat = hats.api.Api.getRandomHatInfo(255, 255, 255);
+        }
     }
 
     public EntityPigzilla(World world, EntityTransformer trans)
@@ -210,7 +215,7 @@ public class EntityPigzilla extends Entity
         {
             stepHeight = 2.2F;
         }
-//        faceEntity(Minecraft.getMinecraft().thePlayer, 0.6F, 0.6F);
+        //        faceEntity(Minecraft.getMinecraft().thePlayer, 0.6F, 0.6F);
 
         motionY -= 0.02D;
 
@@ -230,14 +235,14 @@ public class EntityPigzilla extends Entity
         double sin = Math.sin(yawRad);
         double cos = Math.cos(yawRad);
 
-//        partHead.moveTo(posX - (10F / 16F * 40F) * sin, posY + (8F / 16F * 40F) + (double)(-MathHelper.sin(this.rotationPitch / 180.0F * (float)Math.PI)) * 16D, posZ + (10F / 16F * 40F) * cos);
-//
-//        partBody.moveTo(posX, posY + (6F / 16F * 40F), posZ);
-//
-//        partLeg1.moveTo(posX - (5F / 16F * 40F) * sin + (3F / 16F * 40F) * cos, posY, posZ + (5F / 16F * 40F) * cos + (3F / 16F * 40F) * sin);
-//        partLeg2.moveTo(posX - (5F / 16F * 40F) * sin - (3F / 16F * 40F) * cos, posY, posZ + (5F / 16F * 40F) * cos - (3F / 16F * 40F) * sin);
-//        partLeg3.moveTo(posX + (7F / 16F * 40F) * sin + (3F / 16F * 40F) * cos, posY, posZ - (7F / 16F * 40F) * cos + (3F / 16F * 40F) * sin);
-//        partLeg4.moveTo(posX + (7F / 16F * 40F) * sin - (3F / 16F * 40F) * cos, posY, posZ - (7F / 16F * 40F) * cos - (3F / 16F * 40F) * sin);
+        //        partHead.moveTo(posX - (10F / 16F * 40F) * sin, posY + (8F / 16F * 40F) + (double)(-MathHelper.sin(this.rotationPitch / 180.0F * (float)Math.PI)) * 16D, posZ + (10F / 16F * 40F) * cos);
+        //
+        //        partBody.moveTo(posX, posY + (6F / 16F * 40F), posZ);
+        //
+        //        partLeg1.moveTo(posX - (5F / 16F * 40F) * sin + (3F / 16F * 40F) * cos, posY, posZ + (5F / 16F * 40F) * cos + (3F / 16F * 40F) * sin);
+        //        partLeg2.moveTo(posX - (5F / 16F * 40F) * sin - (3F / 16F * 40F) * cos, posY, posZ + (5F / 16F * 40F) * cos - (3F / 16F * 40F) * sin);
+        //        partLeg3.moveTo(posX + (7F / 16F * 40F) * sin + (3F / 16F * 40F) * cos, posY, posZ - (7F / 16F * 40F) * cos + (3F / 16F * 40F) * sin);
+        //        partLeg4.moveTo(posX + (7F / 16F * 40F) * sin - (3F / 16F * 40F) * cos, posY, posZ - (7F / 16F * 40F) * cos - (3F / 16F * 40F) * sin);
 
         partHead.setLocationAndAngles(posX - (10F / 16F * 40F) * sin, posY + (8F / 16F * 40F) + (double)(-MathHelper.sin(this.rotationPitch / 180.0F * (float)Math.PI)) * 16D, posZ + (10F / 16F * 40F) * cos, 0F, 0F);
 
@@ -249,15 +254,15 @@ public class EntityPigzilla extends Entity
         partLeg4.setLocationAndAngles(posX + (7F / 16F * 40F) * sin - (3F / 16F * 40F) * cos, posY, posZ - (7F / 16F * 40F) * cos - (3F / 16F * 40F) * sin, 0F, 0F);
 
 
-//        for(EntityPigPart part : parts)
-//        {
-//            if(!part.ticked)
-//            {
-//                part.setLocationAndAngles(part.gotoX, part.gotoY, part.gotoZ, 0F, 0F);
-//                worldObj.spawnEntityInWorld(part);
-//            }
-//            part.onUpdate();
-//        }
+        //        for(EntityPigPart part : parts)
+        //        {
+        //            if(!part.ticked)
+        //            {
+        //                part.setLocationAndAngles(part.gotoX, part.gotoY, part.gotoZ, 0F, 0F);
+        //                worldObj.spawnEntityInWorld(part);
+        //            }
+        //            part.onUpdate();
+        //        }
 
         if(!worldObj.isRemote)
         {
@@ -329,7 +334,7 @@ public class EntityPigzilla extends Entity
             motionX *= 0.8D;
             motionZ *= 0.8D;
 
-//            System.out.println(idleTimeout);
+            //            System.out.println(idleTimeout);
 
             if(!worldObj.isRemote && idleTimeout <= 0)
             {
@@ -345,7 +350,7 @@ public class EntityPigzilla extends Entity
                 riddenByEntity.rotationYaw += updateRotation(renderYawOffset, getTargetedRenderYawOffset(), 0.5F) - renderYawOffset;
             }
 
-//            if(!worldObj.isRemote)
+            //            if(!worldObj.isRemote)
             {
                 motionX = (double)(-MathHelper.sin(renderYawOffset / 180.0F * (float)Math.PI));
                 motionZ = (double)(MathHelper.cos(renderYawOffset / 180.0F * (float)Math.PI));
@@ -419,7 +424,7 @@ public class EntityPigzilla extends Entity
     {
         if (worldObj.isRemote && riddenByEntity == null)
         {
-            ChannelHandler.sendToServer(new PacketRidePig(this, entityplayer));
+            PacketHandler.sendToServer(ItFellFromTheSky.channels, new PacketRidePig(this, entityplayer));
             return true;
         }
         else if (!this.worldObj.isRemote && (this.riddenByEntity == null || this.riddenByEntity == entityplayer))
@@ -768,7 +773,7 @@ public class EntityPigzilla extends Entity
             if(i > 1)
             {
                 bb.offset(0D, stepHeight + 0.1D - (fallDistance / 4F), 0D);
-//                bb = bb.expand(1F / 16F * 40D, 0.0D, 1F / 16F * 40D);
+                //                bb = bb.expand(1F / 16F * 40D, 0.0D, 1F / 16F * 40D);
             }
             if(i == 1 && ticksExisted < 60 && newSpawn)
             {

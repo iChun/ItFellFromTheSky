@@ -3,8 +3,6 @@ package itfellfromthesky.common.entity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import itfellfromthesky.common.core.ChunkLoadHandler;
-import itfellfromthesky.common.network.ChannelHandler;
-import itfellfromthesky.common.network.PacketKillMeteorite;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;

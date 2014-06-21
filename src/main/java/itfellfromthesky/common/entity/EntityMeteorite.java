@@ -2,9 +2,10 @@ package itfellfromthesky.common.entity;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ichun.common.core.network.PacketHandler;
 import itfellfromthesky.client.entity.EntitySmokeParticle;
+import itfellfromthesky.common.ItFellFromTheSky;
 import itfellfromthesky.common.core.ChunkLoadHandler;
-import itfellfromthesky.common.network.ChannelHandler;
 import itfellfromthesky.common.network.PacketKillMeteorite;
 import itfellfromthesky.common.network.PacketMeteoriteInfo;
 import net.minecraft.block.Block;
@@ -156,20 +157,20 @@ public class EntityMeteorite extends Entity
         return false;
     }
 
-//    @Override
-//    public AxisAlignedBB getBoundingBox()
-//    {
-//        return boundingBox.expand(-3D, -3D, -3D);
-//    }
+    //    @Override
+    //    public AxisAlignedBB getBoundingBox()
+    //    {
+    //        return boundingBox.expand(-3D, -3D, -3D);
+    //    }
 
     //TODO tell forge that killing a weather event somehow causes a EntityJoinedWorldEvent
     @Override
     public void onUpdate()
     {
-//        if(ticksExisted > 2000)
-//        setDead();
-//        if(!worldObj.isRemote)
-//        System.out.println(this);
+        //        if(ticksExisted > 2000)
+        //        setDead();
+        //        if(!worldObj.isRemote)
+        //        System.out.println(this);
         if(worldObj.isRemote && ticksExisted == 1)
         {
             lastTickPosY -= yOffset;
@@ -193,10 +194,10 @@ public class EntityMeteorite extends Entity
         rotYaw += getRotFacYaw();
         rotPitch += getRotFacPitch();
 
-//        this.boundingBox.offset(motionX, motionY, motionZ);
-//        this.posX = (this.boundingBox.minX + this.boundingBox.maxX) / 2.0D;
-//        this.posY = this.boundingBox.minY + (double)this.yOffset - (double)this.ySize;
-//        this.posZ = (this.boundingBox.minZ + this.boundingBox.maxZ) / 2.0D;
+        //        this.boundingBox.offset(motionX, motionY, motionZ);
+        //        this.posX = (this.boundingBox.minX + this.boundingBox.maxX) / 2.0D;
+        //        this.posY = this.boundingBox.minY + (double)this.yOffset - (double)this.ySize;
+        //        this.posZ = (this.boundingBox.minZ + this.boundingBox.maxZ) / 2.0D;
 
         if(!worldObj.isRemote)
         {
@@ -355,10 +356,10 @@ public class EntityMeteorite extends Entity
                             }
                         }
 
-//                        worldObj.setBlock(i - ((int)Math.round(Math.cos(degs) * radius)), j, k + ((int)Math.round(Math.sin(degs) * radius)), Blocks.leaves, 0, 3);
-//                        worldObj.setBlock(i + ((int)Math.round(Math.cos(degs) * radius)), j, k - ((int)Math.round(Math.sin(degs) * radius)), Blocks.leaves, 0, 3);
-//
-//                        worldObj.setBlock(i + ((int)Math.round(Math.sin(degs) * radius)), j, k + ((int)Math.round(Math.cos(degs) * radius)), Blocks.leaves, 0, 3);
+                        //                        worldObj.setBlock(i - ((int)Math.round(Math.cos(degs) * radius)), j, k + ((int)Math.round(Math.sin(degs) * radius)), Blocks.leaves, 0, 3);
+                        //                        worldObj.setBlock(i + ((int)Math.round(Math.cos(degs) * radius)), j, k - ((int)Math.round(Math.sin(degs) * radius)), Blocks.leaves, 0, 3);
+                        //
+                        //                        worldObj.setBlock(i + ((int)Math.round(Math.sin(degs) * radius)), j, k + ((int)Math.round(Math.cos(degs) * radius)), Blocks.leaves, 0, 3);
                     }
                 }
             }
@@ -415,7 +416,7 @@ public class EntityMeteorite extends Entity
         else
         {
             moveEntity(getMoX(), getMoY(), getMoZ());
-//            System.out.println(posY);
+            //            System.out.println(posY);
             if(worldObj.weatherEffects.contains(this))
             {
                 List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, boundingBox.contract(1D, 1D, 1D));
@@ -470,7 +471,7 @@ public class EntityMeteorite extends Entity
     {
         if(dataWatcher.hasChanges())
         {
-            ChannelHandler.sendToDimension(new PacketMeteoriteInfo(this), worldObj.provider.dimensionId);
+            PacketHandler.sendToDimension(ItFellFromTheSky.channels, new PacketMeteoriteInfo(this), worldObj.provider.dimensionId);
             dataWatcher.getChanged();
         }
     }
@@ -535,7 +536,7 @@ public class EntityMeteorite extends Entity
     {
         if(!worldObj.isRemote)
         {
-            ChannelHandler.sendToDimension(new PacketKillMeteorite(getEntityId()), worldObj.provider.dimensionId);
+            PacketHandler.sendToDimension(ItFellFromTheSky.channels, new PacketKillMeteorite(getEntityId()), worldObj.provider.dimensionId);
             ChunkLoadHandler.removeTicket(this);
             super.setDead();
         }

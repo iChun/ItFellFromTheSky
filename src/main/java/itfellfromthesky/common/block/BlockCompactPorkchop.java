@@ -1,12 +1,13 @@
 package itfellfromthesky.common.block;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ichun.common.core.network.PacketHandler;
 import itfellfromthesky.common.ItFellFromTheSky;
 import itfellfromthesky.common.core.ChunkLoadHandler;
 import itfellfromthesky.common.entity.EntityMeteorite;
 import itfellfromthesky.common.entity.EntityPigzilla;
-import itfellfromthesky.common.network.ChannelHandler;
 import itfellfromthesky.common.network.PacketMeteorSpawn;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -122,6 +123,11 @@ public class BlockCompactPorkchop extends Block
         {
             if(!world.isRemote)
             {
+                if(ItFellFromTheSky.config.getInt("summonPigzillaNeedsOp") == 1 && !FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().isPlayerOpped(player.getCommandSenderName()))
+                {
+                    player.addChatMessage(new ChatComponentTranslation("itfellfromthesky.summonRequiresOp").setChatStyle((new ChatStyle()).setItalic(true).setColor(EnumChatFormatting.GRAY)));
+                    return true;
+                }
                 double ranX = world.rand.nextDouble() * 2D - 1D;
                 double ranZ = world.rand.nextDouble() * 2D - 1D;
 
@@ -184,7 +190,7 @@ public class BlockCompactPorkchop extends Block
 
                 world.spawnEntityInWorld(meteorite);
 
-                ChannelHandler.sendToDimension(new PacketMeteorSpawn(meteorite.getEntityId(), meteorite.posX, meteorite.posY, meteorite.posZ, meteorite.motionX, meteorite.motionY, meteorite.motionZ, meteorite.rotYaw, meteorite.rotPitch), player.dimension);
+                PacketHandler.sendToDimension(ItFellFromTheSky.channels, new PacketMeteorSpawn(meteorite.getEntityId(), meteorite.posX, meteorite.posY, meteorite.posZ, meteorite.motionX, meteorite.motionY, meteorite.motionZ, meteorite.rotYaw, meteorite.rotPitch), player.dimension);
 
                 world.playAuxSFX(2001, i, j, k, Block.getIdFromBlock(ItFellFromTheSky.blockCompactPorkchop));
                 if(!player.capabilities.isCreativeMode)

@@ -7,12 +7,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeChunkManager;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.WeakHashMap;
 
 public class ChunkLoadHandler
-    implements ForgeChunkManager.LoadingCallback
+        implements ForgeChunkManager.LoadingCallback
 {
     public static WeakHashMap<Entity, ForgeChunkManager.Ticket> tickets = new WeakHashMap<Entity, ForgeChunkManager.Ticket>();
 

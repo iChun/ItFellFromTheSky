@@ -2,13 +2,14 @@ package itfellfromthesky.common.network;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ichun.common.core.network.AbstractPacket;
 import io.netty.buffer.ByteBuf;
 import itfellfromthesky.common.entity.EntityMeteorite;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class PacketMeteoriteInfo extends IPacket
+public class PacketMeteoriteInfo extends AbstractPacket
 {
     public int entId;
 
@@ -66,7 +67,7 @@ public class PacketMeteoriteInfo extends IPacket
     }
 
     @Override
-    public void readFrom(ByteBuf buffer, Side side, EntityPlayer player)
+    public void readFrom(ByteBuf buffer, Side side)
     {
         entId = buffer.readInt();
 
@@ -83,7 +84,11 @@ public class PacketMeteoriteInfo extends IPacket
 
         rotYaw = buffer.readFloat();
         rotPitch = buffer.readFloat();
+    }
 
+    @Override
+    public void execute(Side side, EntityPlayer player)
+    {
         if(side.isClient())
         {
             handleClient();

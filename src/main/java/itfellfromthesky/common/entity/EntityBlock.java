@@ -56,8 +56,8 @@ public class EntityBlock extends Entity
 
         preventEntitySpawning = true;
         renderDistanceWeight = 20D;
-//        motionX = 1D;
-//        motionY = motionZ = 1D;
+        //        motionX = 1D;
+        //        motionY = motionZ = 1D;
     }
 
     public EntityBlock(World world, int i, int j, int k)

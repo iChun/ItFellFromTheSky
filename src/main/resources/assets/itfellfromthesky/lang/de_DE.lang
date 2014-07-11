@@ -1,12 +1,16 @@
-#German Language by Cryma
-
 itemGroup.itfellfromthesky=Es fiel aus dem Himmel
 tile.compactPorkchop.name=Kompaktes rohes Schweinefleisch
-itfellfromthesky.desc_compactPorkchop1=Platzieren und rechtsklicken mit einem Höllen Stern
+itfellfromthesky.desc_compactPorkchop1=Platziere es und rechtsklicke mit einem Netherstern
 itfellfromthesky.desc_compactPorkchop2=...oder nehm es auseinander.
-itfellfromthesky.desc_compactPorkchop3=Ich bin eine Kurzinfo,
+itfellfromthesky.desc_compactPorkchop3=Ich bin ein Tooltip,
 itfellfromthesky.desc_compactPorkchop4=kein Polizist.
 itfellfromthesky.hailPigzilla.hail=Grüßt
 itfellfromthesky.hailPigzilla.hydra=Hydra
-itfellfromthesky.hailPigzilla.pigzilla= Schweinezilla!
+itfellfromthesky.hailPigzilla.pigzilla= Pigzilla!
 itfellfromthesky.hailPigzilla.location=Er ist bei
+itfellfromthesky.summonRequiresOp=Du must Op sein, um den mächtigen Pigzilla zu beschwören!
+itfellfromthesky.config.cat.gameplay.name=Gameplay
+itfellfromthesky.config.cat.gameplay.comment=These options affect the gameplay while using the mod.
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.name=Summon Pigzilla Needs Op
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.comment=Do you require Op to summon Pigzilla?
+#German Language by Cryma and Vexatos

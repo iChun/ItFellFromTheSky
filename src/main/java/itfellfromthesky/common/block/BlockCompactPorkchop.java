@@ -123,7 +123,7 @@ public class BlockCompactPorkchop extends Block
         {
             if(!world.isRemote)
             {
-                if(ItFellFromTheSky.config.getInt("summonPigzillaNeedsOp") == 1 && !FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().isPlayerOpped(player.getCommandSenderName()))
+                if(ItFellFromTheSky.config.getInt("summonPigzillaNeedsOp") == 1 && !FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152596_g(player.getGameProfile()))
                 {
                     player.addChatMessage(new ChatComponentTranslation("itfellfromthesky.summonRequiresOp").setChatStyle((new ChatStyle()).setItalic(true).setColor(EnumChatFormatting.GRAY)));
                     return true;

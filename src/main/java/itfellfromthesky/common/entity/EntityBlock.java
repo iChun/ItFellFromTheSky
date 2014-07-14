@@ -3,7 +3,7 @@ package itfellfromthesky.common.entity;
 import cpw.mods.fml.common.ObfuscationReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import itfellfromthesky.common.core.ObfHelper;
+import ichun.common.core.util.ObfHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.ITileEntityProvider;

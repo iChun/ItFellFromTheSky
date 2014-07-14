@@ -39,7 +39,7 @@ public class PacketRidePig extends AbstractPacket
     @Override
     public void execute(Side side, EntityPlayer player)
     {
-        EntityPlayer player1 = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().getPlayerForUsername(playerName);
+        EntityPlayer player1 = FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().func_152612_a(playerName);
         if(player1.equals(player))
         {
             Entity ent = player.worldObj.getEntityByID(entId);

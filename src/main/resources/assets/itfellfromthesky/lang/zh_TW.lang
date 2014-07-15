@@ -1,0 +1,16 @@
+#Translated by hit1205
+itemGroup.itfellfromthesky=It Fell From The Sky
+tile.compactPorkchop.name=壓縮生豬排
+itfellfromthesky.desc_compactPorkchop1=方塊放置後，手拿地獄之星以右鍵點擊
+itfellfromthesky.desc_compactPorkchop2=...或者直接破壞方塊也行。
+itfellfromthesky.desc_compactPorkchop3=我是一條小提示，
+itfellfromthesky.desc_compactPorkchop4=不是一條豬蹄子。
+itfellfromthesky.hailPigzilla.hail=高呼萬歲 
+itfellfromthesky.hailPigzilla.hydra=九頭蛇
+itfellfromthesky.hailPigzilla.pigzilla= 偉哉豬吉拉！
+itfellfromthesky.hailPigzilla.location=他降臨在 
+itfellfromthesky.summonRequiresOp=你需要有 Op 權限，才能召喚偉大的豬吉拉！
+itfellfromthesky.config.cat.gameplay.name=遊戲選項
+itfellfromthesky.config.cat.gameplay.comment=這些選項會影響本模組的遊玩方式
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.name=限定 Op 權限才能召喚豬吉拉
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.comment=你確定要限定 Op 才能召喚豬吉拉嗎？

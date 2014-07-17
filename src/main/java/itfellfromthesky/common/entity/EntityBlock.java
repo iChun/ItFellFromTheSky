@@ -202,7 +202,7 @@ public class EntityBlock extends Entity
                 if(prevMotionY < -0.1D)
                 {
                     double minBounceFactor = Math.sqrt(100D / 75D);
-                    float blockHardness = (Float)ObfuscationReflectionHelper.getPrivateValue(Block.class, getBlock(), ObfHelper.blockHardness);
+                    float blockHardness = getBlock().blockHardness;
                     double bounceFactor = (blockHardness < minBounceFactor ? minBounceFactor : blockHardness);
                     motionY = prevMotionY * -(1D / (2 * bounceFactor));
 
@@ -231,7 +231,7 @@ public class EntityBlock extends Entity
         if(motionX == 0D && prevMotionX != motionX)
         {
             double minBounceFactor = Math.sqrt(100D / 75D);
-            float blockHardness = (Float)ObfuscationReflectionHelper.getPrivateValue(Block.class, getBlock(), ObfHelper.blockHardness);
+            float blockHardness = getBlock().blockHardness;
             double bounceFactor = 2D * (blockHardness < minBounceFactor ? minBounceFactor : blockHardness);
             motionX = prevMotionX * -(1D / (bounceFactor * bounceFactor));
 
@@ -241,7 +241,7 @@ public class EntityBlock extends Entity
         if(motionZ == 0D && prevMotionZ != motionZ)
         {
             double minBounceFactor = Math.sqrt(100D / 75D);
-            float blockHardness = (Float)ObfuscationReflectionHelper.getPrivateValue(Block.class, getBlock(), ObfHelper.blockHardness);
+            float blockHardness = getBlock().blockHardness;
             double bounceFactor = 2D * (blockHardness < minBounceFactor ? minBounceFactor : blockHardness);
             motionZ = prevMotionZ * -(1D / (bounceFactor * bounceFactor));
 

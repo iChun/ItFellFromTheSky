@@ -77,7 +77,7 @@ public class ItFellFromTheSky
         MinecraftForge.EVENT_BUS.register(handler);
         ForgeChunkManager.setForcedChunkLoadingCallback(this, new ChunkLoadHandler());
 
-        ModVersionChecker.register_iChunMod(new ModVersionInfo("ItFellFromTheSky", "1.7", version, false));
+        ModVersionChecker.register_iChunMod(new ModVersionInfo("ItFellFromTheSky", iChunUtil.versionOfMC, version, false));
     }
 
     @Mod.EventHandler

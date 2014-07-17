@@ -1,0 +1,15 @@
+itemGroup.itfellfromthesky=Az Égből Pottyant le
+tile.compactPorkchop.name=Kompakt Nyers Sertésszelet
+itfellfromthesky.desc_compactPorkchop1=Helyezd le és jobb klikkelj egy Nether Star-ral.
+itfellfromthesky.desc_compactPorkchop2=...vagy uncraftoljad.
+itfellfromthesky.desc_compactPorkchop3=Én egy tippablak vagyok,
+itfellfromthesky.desc_compactPorkchop4=nem egy zsaru.
+itfellfromthesky.hailPigzilla.hail=Hail 
+itfellfromthesky.hailPigzilla.hydra=Hydra
+itfellfromthesky.hailPigzilla.pigzilla= Pigzilla!
+itfellfromthesky.hailPigzilla.location=He's at 
+itfellfromthesky.summonRequiresOp=Operátori Státuszra van szükséged, hogy megidézt a hatalmas Pigzillát!
+itfellfromthesky.config.cat.gameplay.name=Játék
+itfellfromthesky.config.cat.gameplay.comment=Ezek a beállítások hatással vannak a játékra amíg használod a modot.
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.name=Pigzilla megidézése Operátort kér.
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.comment=Kell Operátor, hogy megidézd Pigzillát?

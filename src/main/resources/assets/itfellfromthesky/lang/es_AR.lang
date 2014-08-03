@@ -1,0 +1,15 @@
+itemGroup.itfellfromthesky=Cayo del Cielo
+tile.compactPorkchop.name=Carne de Cerdo Cruda Comprimida
+itfellfromthesky.desc_compactPorkchop1=Colocala y haz click derecho con una estrella del inframundo
+itfellfromthesky.desc_compactPorkchop2=...o desconstruirla.
+itfellfromthesky.desc_compactPorkchop3=Soy un tip,
+itfellfromthesky.desc_compactPorkchop4=no un policia.
+itfellfromthesky.hailPigzilla.hail=Hail 
+itfellfromthesky.hailPigzilla.hydra=Hydra
+itfellfromthesky.hailPigzilla.pigzilla= Cerdozilla!
+itfellfromthesky.hailPigzilla.location=El esta en
+itfellfromthesky.summonRequiresOp=Necesitas OP para invocar a Cerdozilla!
+itfellfromthesky.config.cat.gameplay.name=Gameplay
+itfellfromthesky.config.cat.gameplay.comment=Esto solo afecta el Gameplay que carga el mod.
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.name=Invocar a Cerdozilla necesita OP
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.comment=Necesitas OP para invocar a Cerdozilla?

@@ -1,0 +1,15 @@
+itemGroup.itfellfromthesky=It Fell From The Sky
+tile.compactPorkchop.name=Компактный Блок Свинины
+itfellfromthesky.desc_compactPorkchop1=Поставь и кликни правой кнопкой мыши с адской звездой
+itfellfromthesky.desc_compactPorkchop2=...или сделай обратно, просто обычным мясом.
+itfellfromthesky.desc_compactPorkchop3=Я подсказка,
+itfellfromthesky.desc_compactPorkchop4=а не полицейский.
+itfellfromthesky.hailPigzilla.hail=Град
+itfellfromthesky.hailPigzilla.hydra=Гидра
+itfellfromthesky.hailPigzilla.pigzilla=Пигзилла!
+itfellfromthesky.hailPigzilla.location=Он тут
+itfellfromthesky.summonRequiresOp=Ты должен быть Администратором сервера что-бы призвать могущественного Пигзиллу!
+itfellfromthesky.config.cat.gameplay.name=Геймплей
+itfellfromthesky.config.cat.gameplay.comment=These options affect the gameplay while using the mod. Эти параметры влияют на геймплей, когда используется данный мод.
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.name=Что-бы призвать Пигзиллу вы должны быть Администратором данного сервера
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.comment=Вы должны быть Администратором сервера, что-бы призвать Пигзиллу?

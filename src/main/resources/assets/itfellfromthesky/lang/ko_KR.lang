@@ -1,0 +1,15 @@
+itemGroup.itfellfromthesky=그것은 하늘에서 떨어졌어
+tile.compactPorkchop.name=압축 생 돼지고기
+itfellfromthesky.desc_compactPorkchop1=설치 후에 네더 스타를 들고 우클릭해
+itfellfromthesky.desc_compactPorkchop2=...조합 해제도 가능
+itfellfromthesky.desc_compactPorkchop3=나는 툴팁이다!
+itfellfromthesky.desc_compactPorkchop4=냉동은 안돼
+itfellfromthesky.hailPigzilla.hail=묘사 
+itfellfromthesky.hailPigzilla.hydra=히드라
+itfellfromthesky.hailPigzilla.pigzilla= 피그질라!
+itfellfromthesky.hailPigzilla.location=그가 
+itfellfromthesky.summonRequiresOp=당신은 강력한 Pigzilla을 소환할 것입니다.
+itfellfromthesky.config.cat.gameplay.name=게임플레이
+itfellfromthesky.config.cat.gameplay.comment=이 모드를 사용하면 게임플레이에 영향을 미칩니다
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.name=Pigzilla를 소환하기 위해서는 OP권한이 필요합니다
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.comment=당신은 Pigzilla를 소환하기 위한 Op권한이 필요합니까?

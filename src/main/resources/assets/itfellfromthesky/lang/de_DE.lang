@@ -10,7 +10,7 @@ itfellfromthesky.hailPigzilla.pigzilla= Pigzilla!
 itfellfromthesky.hailPigzilla.location=Er ist bei
 itfellfromthesky.summonRequiresOp=Du must Op sein, um den mächtigen Pigzilla zu beschwören!
 itfellfromthesky.config.cat.gameplay.name=Gameplay
-itfellfromthesky.config.cat.gameplay.comment=These options affect the gameplay while using the mod.
-itfellfromthesky.config.prop.summonPigzillaNeedsOp.name=Summon Pigzilla Needs Op
+itfellfromthesky.config.cat.gameplay.comment=Diese Option beeinflusst dein gameplay wahrend des Spielens.
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.name=Summon Pigzilla ist so OP das man O braucht
 itfellfromthesky.config.prop.summonPigzillaNeedsOp.comment=Benoetigt man Op um Pigzilla zu beschwören?
 #German Language by Cryma and Vexatos

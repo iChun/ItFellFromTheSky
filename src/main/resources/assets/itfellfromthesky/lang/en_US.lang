@@ -13,3 +13,6 @@ itfellfromthesky.config.cat.gameplay.name=Gameplay
 itfellfromthesky.config.cat.gameplay.comment=These options affect the gameplay while using the mod.
 itfellfromthesky.config.prop.summonPigzillaNeedsOp.name=Summon Pigzilla Needs Op
 itfellfromthesky.config.prop.summonPigzillaNeedsOp.comment=Do you require Op to summon Pigzilla?
+
+entity.ItFellFromTheSky.itfellfromthesky_block.name=Flying Block
+entity.ItFellFromTheSky.itfellfromthesky_pigzilla.name=Pigzilla

@@ -11,7 +11,7 @@ itfellfromthesky.hailPigzilla.location=Он тут
 itfellfromthesky.summonRequiresOp=Вы должны быть Оператором, чтобы призвать могущественного Пигзиллу!
 itfellfromthesky.config.cat.gameplay.name=Игровой процесс
 itfellfromthesky.config.cat.gameplay.comment=Эти параметры влияют на игровой процесс, когда используется данный мод.
-itfellfromthesky.config.prop.summonPigzillaNeedsOp.name=Вы должны быть Оператором, чтобы призвать Пигзиллу
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.name=Оператор для Пигзиллы
 itfellfromthesky.config.prop.summonPigzillaNeedsOp.comment=Вы должны быть Оператором, чтобы призвать Пигзиллу?
 
 entity.ItFellFromTheSky.itfellfromthesky_block.name=Летящий блок

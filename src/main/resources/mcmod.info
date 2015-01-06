@@ -15,7 +15,7 @@
   "screenshots": [
   ],
   "dependancies": [
-    "Forge"
+    "Forge", "iChunUtil"
   ]
 }
 ]

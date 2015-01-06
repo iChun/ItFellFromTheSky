@@ -1,0 +1,15 @@
+itemGroup.itfellfromthesky=Se tippui taivaalta
+tile.compactPorkchop.name=Compakti raaka porsaanliha
+itfellfromthesky.desc_compactPorkchop1=Laita ja paina hornantähdellä
+itfellfromthesky.desc_compactPorkchop2=...Tai 
+itfellfromthesky.desc_compactPorkchop3=Olen 
+itfellfromthesky.desc_compactPorkchop4=En poliisi
+itfellfromthesky.hailPigzilla.hail=Hail 
+itfellfromthesky.hailPigzilla.hydra=Hydra
+itfellfromthesky.hailPigzilla.pigzilla= Pigzilla!
+itfellfromthesky.hailPigzilla.location=Hän on
+itfellfromthesky.summonRequiresOp=Sinun täytyy olla OP että voit kutsua Pigzillan!
+itfellfromthesky.config.cat.gameplay.name=Peli
+itfellfromthesky.config.cat.gameplay.comment=Nämä asetukset vaikuttaa peliin kun käyttää modia.
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.name=Pigzillan kutsuminen tarvitsee OP:n
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.comment=Tarvitsetko sinä OP:n kutsuaksesi Pigzillan?

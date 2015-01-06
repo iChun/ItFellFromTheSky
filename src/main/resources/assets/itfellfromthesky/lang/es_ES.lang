@@ -1,0 +1,15 @@
+itemGroup.itfellfromthesky=It Fell From The Sky
+tile.compactPorkchop.name=Carne de cerdo cruda compacta
+itfellfromthesky.desc_compactPorkchop1=Colócala y dale click derecho con una estrella del inframundo
+itfellfromthesky.desc_compactPorkchop2=...o descraftéala.
+itfellfromthesky.desc_compactPorkchop3=Soy una anotación,
+itfellfromthesky.desc_compactPorkchop4=no un policía.
+itfellfromthesky.hailPigzilla.hail=Saluda a
+itfellfromthesky.hailPigzilla.hydra=Hydra
+itfellfromthesky.hailPigzilla.pigzilla= Pigzilla!
+itfellfromthesky.hailPigzilla.location=Está en 
+itfellfromthesky.summonRequiresOp=¡Necesitas ser Op para invocar al poderoso Pigzilla!
+itfellfromthesky.config.cat.gameplay.name=Gameplay
+itfellfromthesky.config.cat.gameplay.comment=Éstas opciones afectan al gameplay mientras se usa el mod.
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.name=Invocar a Pigzilla Necesita Op
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.comment=¿Se requiere ser Op para invocar a Pigzilla?

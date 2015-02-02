@@ -1,16 +1,15 @@
 itemGroup.itfellfromthesky=Es fiel aus dem Himmel
-tile.compactPorkchop.name=Kompaktes rohes Schweinefleisch
+tile.compactPorkchop.name=Gepresstes rohes Schweinefleisch
 itfellfromthesky.desc_compactPorkchop1=Platziere es und rechtsklicke mit einem Netherstern
-itfellfromthesky.desc_compactPorkchop2=...oder nehm es auseinander.
+itfellfromthesky.desc_compactPorkchop2=...oder zerlege es.
 itfellfromthesky.desc_compactPorkchop3=Ich bin ein Tooltip,
 itfellfromthesky.desc_compactPorkchop4=kein Polizist.
 itfellfromthesky.hailPigzilla.hail=Grüßt
 itfellfromthesky.hailPigzilla.hydra=Hydra
 itfellfromthesky.hailPigzilla.pigzilla= Pigzilla!
 itfellfromthesky.hailPigzilla.location=Er ist bei
-itfellfromthesky.summonRequiresOp=Du must Op sein, um den mächtigen Pigzilla zu beschwören!
+itfellfromthesky.summonRequiresOp=Du musst Op sein, um den mächtigen Pigzilla zu beschwören!
 itfellfromthesky.config.cat.gameplay.name=Gameplay
-itfellfromthesky.config.cat.gameplay.comment=Diese Option beeinflusst dein gameplay wahrend des Spielens.
-itfellfromthesky.config.prop.summonPigzillaNeedsOp.name=Summon Pigzilla ist so OP das man O braucht
-itfellfromthesky.config.prop.summonPigzillaNeedsOp.comment=Benoetigt man Op um Pigzilla zu beschwören?
-#German Language by Cryma and Vexatos
+itfellfromthesky.config.cat.gameplay.comment=Diese Optionen beeinflussen das Spiel zusammen mit diesem Mod.
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.name=Pigzilla Beschwörung benötigt OP
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.comment=Benötigt man Op, um Pigzilla zu beschwören?

@@ -1,0 +1,18 @@
+itemGroup.itfellfromthesky=To Spadło Z Nieba
+tile.compactPorkchop.name=Kompaktowy surowy schab
+itfellfromthesky.desc_compactPorkchop1=Umieść i kliknij prawym przyciskiem myszy za pomocą Gwiazdy Netheru
+itfellfromthesky.desc_compactPorkchop2=...lub odcraftuj go.
+itfellfromthesky.desc_compactPorkchop3=Jestem podpowiedzią,
+itfellfromthesky.desc_compactPorkchop4=nie policjantem.
+itfellfromthesky.hailPigzilla.hail=Grad 
+itfellfromthesky.hailPigzilla.hydra=Hydra
+itfellfromthesky.hailPigzilla.pigzilla= Pigzilla!
+itfellfromthesky.hailPigzilla.location=On jest 
+itfellfromthesky.summonRequiresOp=Musisz OP, aby przywołać potężnego Pigzilli!
+itfellfromthesky.config.cat.gameplay.name=Rozgrywka
+itfellfromthesky.config.cat.gameplay.comment=Opcje te wpływają na rozgrywkę podczas korzystania z moda.
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.name=Przywołanie Pigzilli potrzebuje OP
+itfellfromthesky.config.prop.summonPigzillaNeedsOp.comment=Czy wymaga OP, aby przywołać Pigzillę?
+
+entity.ItFellFromTheSky.itfellfromthesky_block.name=Latający blok
+entity.ItFellFromTheSky.itfellfromthesky_pigzilla.name=Pigzilla

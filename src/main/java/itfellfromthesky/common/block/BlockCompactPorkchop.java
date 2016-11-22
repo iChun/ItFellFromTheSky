@@ -43,7 +43,7 @@ public class BlockCompactPorkchop extends Block
             @Override
             public String getBreakSound()
             {
-                return "mob.pig.say";
+                return "mob.pig.death";
             }
 
             @Override
